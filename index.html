@@ -297,6 +297,18 @@
                     <h3>👩‍🏫 Data Guru</h3>
                     <p>Kelola profil dan daftar tenaga pengajar</p>
                 </div>
+                <div class="admin-card" onclick="alert('Membuka menu: Absen Siswa')">
+                    <h3>📝 Absen Siswa</h3>
+                    <p>Pantau rekapitulasi kehadiran harian siswa</p>
+                </div>
+                <div class="admin-card" onclick="alert('Membuka menu: Penjemputan Siswa')">
+                    <h3>🚗 Penjemputan Siswa</h3>
+                    <p>Kelola status dan log penjemputan anak sekolah</p>
+                </div>
+                <div class="admin-card" onclick="alert('Membuka menu: Absen Karyawan')">
+                    <h3>📋 Absen Karyawan</h3>
+                    <p>Rekap kehadiran guru dan staf pegawai</p>
+                </div>
             </div>
 
             <button class="btn-logout" onclick="switchPage('home')">Keluar (Logout)</button>
@@ -366,7 +378,7 @@
             if (userInput === 'admin123' && passInput === '123456789') {
                 alert('Login Berhasil! Selamat datang Admin.');
                 document.getElementById('loginForm').reset();
-                switchPage('admin'); // Pindah ke halaman Dashboard Admin
+                switchPage('admin'); 
             } else {
                 alert('Username atau Password salah! Silakan coba lagi.');
             }
