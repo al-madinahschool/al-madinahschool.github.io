@@ -307,7 +307,7 @@
     <div id="page-kontak" class="page-section">
         <main style="max-width: 800px; margin: 30px auto;">
             <h2>Kontak Kami</h2>
-            <p>Silخاب hubungi kami melalui alamat kantor sekolah atau melalui layanan pesan resmi untuk informasi seputar pendaftaran dan administrasi.</p>
+            <p>Silakan hubungi kami melalui alamat kantor sekolah atau melalui layanan pesan resmi untuk informasi seputar pendaftaran dan administrasi.</p>
         </main>
     </div>
 
@@ -376,7 +376,7 @@
 
     <!-- HALAMAN 7: MENU TAMBAH USER (DOWNLOAD, UPLOAD, TABEL & EDIT HAK AKSES) -->
     <div id="tambah-user-menu" class="page-section">
-        <main style="max-width: 900px; margin: 30px auto;" class="admin-dashboard">
+        <main style="max-width: 950px; margin: 30px auto;" class="admin-dashboard">
             <h2>Manajemen Tambah User (Excel / CSV)</h2>
             <p>Unduh templat atau unggah data user baru ke sistem:</p>
             
@@ -394,7 +394,7 @@
                 </div>
             </div>
 
-            <!-- Form Edit Hak Akses (Tersembunyi sampai tombol "Atur Hak Akses" diklik) -->
+            <!-- Form Edit Hak Akses (Tersembunyi sampai tombol "Hak Akses" diklik) -->
             <div id="edit-access-box" style="display: none; background: #fff; border: 2px solid #2E8B57; padding: 20px; border-radius: 8px; margin-top: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 <h3 id="edit-access-title" style="color: #2E8B57; margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Pengaturan Hak Akses User</h3>
                 <p style="font-size: 0.9rem; color: #555;">Centang menu yang diizinkan untuk user ini, lalu klik Simpan:</p>
@@ -518,7 +518,7 @@
             }
         ];
 
-        let editingUserIndex = null; // Menyimpan index user yang sedang diatur hak aksesnya
+        let editingUserIndex = null;
 
         // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
         function updateDateTime() {
@@ -679,7 +679,7 @@
             }
 
             let html = '<table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; text-align: left;">';
-            html += '<tr style="background-color: #2E8B57; color: white;"><th style="padding: 10px; border: 1px solid #ddd;">No</th><th style="padding: 10px; border: 1px solid #ddd;">Username</th><th style="padding: 10px; border: 1px solid #ddd;">Nama Pengguna</th><th style="padding: 10px; border: 1px solid #ddd;">Jabatan</th><th style="padding: 10px; border: 1px solid #ddd;">Hak Akses Diizinkan</th><th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Aksi</th></tr>';
+            html += '<tr style="background-color: #2E8B57; color: white;"><th style="padding: 10px; border: 1px solid #ddd;">No</th><th style="padding: 10px; border: 1px solid #ddd;">Username</th><th style="padding: 10px; border: 1px solid #ddd;">Password</th><th style="padding: 10px; border: 1px solid #ddd;">Nama Pengguna</th><th style="padding: 10px; border: 1px solid #ddd;">Jabatan</th><th style="padding: 10px; border: 1px solid #ddd;">Hak Akses Diizinkan</th><th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Aksi</th></tr>';
             
             usersList.forEach((u, index) => {
                 let badgeList = (u.hak_akses && u.hak_akses.length > 0) 
@@ -689,6 +689,7 @@
                 html += `<tr>
                     <td style="padding: 9px; border: 1px solid #ddd; text-align: center;">${index + 1}</td>
                     <td style="padding: 9px; border: 1px solid #ddd;">${u.username}</td>
+                    <td style="padding: 9px; border: 1px solid #ddd;">${u.password}</td>
                     <td style="padding: 9px; border: 1px solid #ddd;">${u.nama}</td>
                     <td style="padding: 9px; border: 1px solid #ddd;">${u.jabatan}</td>
                     <td style="padding: 9px; border: 1px solid #ddd;">${badgeList}</td>
@@ -708,7 +709,6 @@
             const user = usersList[index];
             document.getElementById('edit-access-title').innerText = `Atur Hak Akses untuk: ${user.nama} (${user.username})`;
             
-            // Tandai checkbox sesuai hak akses yang sudah dimiliki user tersebut
             const checkboxes = document.querySelectorAll('input[name="editMenu"]');
             checkboxes.forEach(cb => {
                 if (user.hak_akses && user.hak_akses.includes(cb.value)) {
