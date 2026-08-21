@@ -107,6 +107,16 @@
             margin-top: 0;
             font-size: 1.1rem;
         }
+        .news-card-item {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .news-card-item:hover {
+            opacity: 0.75;
+        }
         /* Style untuk Menu Login & Form */
         .login-box {
             max-width: 500px;
@@ -241,27 +251,41 @@
     
     <!-- HALAMAN 1: BERANDA -->
     <div id="page-home" class="page-section active-page">
-        <div class="slider-container">
-            <img src="foto1.jpg" class="slide active" alt="Galeri Sekolah 1">
-            <img src="foto2.jpg" class="slide" alt="Galeri Sekolah 2">
-            <img src="foto3.jpg" class="slide" alt="Galeri Sekolah 3">
-        </div>
-        
-        <div class="home-content-grid">
-            <main>
-                <h2>Pengumuman Terbaru</h2>
-                <p>Selamat datang di portal resmi <strong>Islamic School Al-Madinah</strong>. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</p>
-                
-                <h2>Visi & Misi</h2>
-                <p>Menjadi institusi pendidikan yang mencetak generasi unggul, berakhlak mulia, dan siap menghadapi tantangan global dengan pondasi agama yang kuat.</p>
-            </main>
+        <!-- Tampilan Utama Beranda (Slider & Grid Berita) -->
+        <div id="home-main-view">
+            <div class="slider-container">
+                <img src="foto1.jpg" class="slide active" alt="Galeri Sekolah 1">
+                <img src="foto2.jpg" class="slide" alt="Galeri Sekolah 2">
+                <img src="foto3.jpg" class="slide" alt="Galeri Sekolah 3">
+            </div>
+            
+            <div class="home-content-grid">
+                <main>
+                    <h2>Pengumuman Terbaru</h2>
+                    <p>Selamat datang di portal resmi <strong>Islamic School Al-Madinah</strong>. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</p>
+                    
+                    <h2>Visi & Misi</h2>
+                    <p>Menjadi institusi pendidikan yang mencetak generasi unggul, berakhlak mulia, dan siap menghadapi tantangan global dengan pondasi agama yang kuat.</p>
+                </main>
 
-            <aside class="news-sidebar">
-                <h3>📰 Berita Terkini</h3>
-                <div id="dynamic-news-container">
-                    <p style="color: #666; font-style: italic; font-size: 0.9rem;">Belum ada berita yang diterbitkan.</p>
-                </div>
-            </aside>
+                <aside class="news-sidebar">
+                    <h3>📰 Berita Terkini</h3>
+                    <div id="dynamic-news-container">
+                        <p style="color: #666; font-style: italic; font-size: 0.9rem;">Belum ada berita yang diterbitkan.</p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- Tampilan Detail Berita (Muncul Saat Berita Diklik) -->
+        <div id="news-detail-view" style="display: none; max-width: 900px; margin: 30px auto; padding: 0 20px;">
+            <main style="max-width: 100%;">
+                <button onclick="backToHomeFeed()" style="background-color: #2E8B57; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 20px;">← Kembali ke Beranda</button>
+                <small id="detail-date" style="color: #888; display: block; margin-bottom: 5px;"></small>
+                <h2 id="detail-title" style="color: #2E8B57; margin-top: 0; margin-bottom: 15px;"></h2>
+                <div id="detail-media" style="margin-bottom: 20px; text-align: center;"></div>
+                <p id="detail-content" style="line-height: 1.8; color: #333; white-space: pre-line; font-size: 1.05rem;"></p>
+            </main>
         </div>
     </div>
 
@@ -352,7 +376,7 @@
         </main>
     </div>
 
-    <!-- HALAMAN 7: MENU UTAMA BERITA TERKINI (Sub-Menu) -->
+    <!-- HALAMAN 7: SUB-MENU BERITA TERKINI -->
     <div id="berita-terkini-menu" class="page-section">
         <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
             <h2>Manajemen Berita Terkini</h2>
@@ -396,15 +420,13 @@
         </div>
     </div>
 
-    <!-- HALAMAN 9: BERITA DITERBITKAN (Daftar & Hapus Berita) -->
+    <!-- HALAMAN 9: BERITA DITERBITKAN -->
     <div id="berita-list" class="page-section">
         <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
             <h2>Daftar Berita Diterbitkan</h2>
             <p>Berikut adalah daftar berita yang sedang tayang di *website*:</p>
             
-            <div id="admin-news-list-container" style="margin-top: 20px;">
-                <!-- List berita akan muncul di sini secara otomatis -->
-            </div>
+            <div id="admin-news-list-container" style="margin-top: 20px;"></div>
 
             <button class="btn-logout" style="background-color: #6c757d;" onclick="switchPage('berita-terkini-menu')">Kembali</button>
         </main>
@@ -434,11 +456,8 @@
     </footer>
 
     <script>
-        // Kredensial Login Admin
         let adminUser = 'admin123';
         let adminPass = '123456789';
-
-        // Daftar Berita
         let newsList = [];
 
         // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
@@ -487,6 +506,10 @@
             if (target) {
                 target.classList.add('active-page');
             }
+            // Pastikan kembali ke tampilan utama beranda jika masuk halaman home
+            if(pageId === 'home') {
+                backToHomeFeed();
+            }
             window.scrollTo(0, 0); 
         }
 
@@ -514,7 +537,7 @@
             if (newU && newP) {
                 adminUser = newU;
                 adminPass = newP;
-                alert('Profil berhasil diperbarui! Silakan gunakan Username dan Kata Sandi baru untuk login berikutnya.');
+                alert('Profil berhasil diperbarui!');
                 document.getElementById('profileForm').reset();
                 switchPage('admin');
             }
@@ -527,14 +550,19 @@
             const content = document.getElementById('newsContent').value;
             const fileInput = document.getElementById('newsMedia');
 
-            let mediaHtml = '';
+            let mediaUrl = '';
+            let mediaType = '';
+            let thumbnailHtml = '';
+
             if (fileInput.files && fileInput.files[0]) {
                 const file = fileInput.files[0];
-                const fileUrl = URL.createObjectURL(file);
+                mediaUrl = URL.createObjectURL(file);
                 if (file.type.startsWith('video/')) {
-                    mediaHtml = `<video src="${fileUrl}" controls style="width: 100%; height: 140px; object-fit: cover; border-radius: 5px; margin-bottom: 8px;"></video>`;
+                    mediaType = 'video';
+                    thumbnailHtml = `<video src="${mediaUrl}" style="width: 100%; height: 130px; object-fit: cover; border-radius: 5px; margin-bottom: 6px;"></video>`;
                 } else {
-                    mediaHtml = `<img src="${fileUrl}" style="width: 100%; height: 140px; object-fit: cover; border-radius: 5px; margin-bottom: 8px;" alt="Media Berita">`;
+                    mediaType = 'image';
+                    thumbnailHtml = `<img src="${mediaUrl}" style="width: 100%; height: 130px; object-fit: cover; border-radius: 5px; margin-bottom: 6px;" alt="Berita">`;
                 }
             }
 
@@ -543,17 +571,19 @@
             newsList.unshift({
                 title: title,
                 content: content,
-                media: mediaHtml,
+                mediaUrl: mediaUrl,
+                mediaType: mediaType,
+                thumbnailHtml: thumbnailHtml,
                 date: currentDate
             });
 
             renderNewsFeed();
             alert(`Berita "${title}" berhasil diterbitkan!`);
             document.getElementById('newsForm').reset();
-            switchPage('berita-terkini-menu');
+            switchPage('home');
         }
 
-        // Fungsi Merender Daftar Berita di Halaman Beranda
+        // Fungsi Menampilkan Daftar Berita di Sidebar Beranda
         function renderNewsFeed() {
             const container = document.getElementById('dynamic-news-container');
             if (newsList.length === 0) {
@@ -562,20 +592,48 @@
             }
 
             let html = '';
-            newsList.forEach(item => {
+            newsList.forEach((item, index) => {
                 html += `
-                    <div style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
-                        ${item.media}
+                    <div class="news-card-item" onclick="showNewsDetail(${index})">
+                        ${item.thumbnailHtml}
                         <small style="color: #888;">📅 ${item.date}</small>
-                        <h4 style="margin: 5px 0 6px 0; color: #1a5c38; font-size: 1.05rem;">${item.title}</h4>
-                        <p style="font-size: 0.9rem; color: #444; margin: 0; line-height: 1.4;">${item.content}</p>
+                        <h4 style="margin: 3px 0 4px 0; color: #1a5c38; font-size: 1rem;">${item.title}</h4>
+                        <p style="font-size: 0.85rem; color: #444; margin: 0;">${item.content.substring(0, 50)}...</p>
                     </div>
                 `;
             });
             container.innerHTML = html;
         }
 
-        // Fungsi Merender Daftar Berita di Panel Admin (Untuk Dikelola/Dihapus)
+        // Fungsi Membuka Tampilan Detail Berita Lengkap
+        function showNewsDetail(index) {
+            const item = newsList[index];
+            document.getElementById('detail-date').innerText = `📅 Dipublikasikan pada: ${item.date}`;
+            document.getElementById('detail-title').innerText = item.title;
+            
+            let largeMediaHtml = '';
+            if (item.mediaType === 'video') {
+                largeMediaHtml = `<video src="${item.mediaUrl}" controls style="max-width: 100%; max-height: 450px; border-radius: 8px;"></video>`;
+            } else if (item.mediaType === 'image') {
+                largeMediaHtml = `<img src="${item.mediaUrl}" style="max-width: 100%; max-height: 450px; object-fit: contain; border-radius: 8px;" alt="Detail Berita">`;
+            }
+            document.getElementById('detail-media').innerHTML = largeMediaHtml;
+            document.getElementById('detail-content').innerText = item.content;
+
+            // Sembunyikan grid utama beranda, tampilkan kotak detail berita
+            document.getElementById('home-main-view').style.display = 'none';
+            document.getElementById('news-detail-view').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // Fungsi Kembali ke Tampilan Utama Beranda
+        function backToHomeFeed() {
+            document.getElementById('news-detail-view').style.display = 'none';
+            document.getElementById('home-main-view').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // Fungsi Manajemen Berita di Panel Admin
         function renderNewsManagement() {
             const container = document.getElementById('admin-news-list-container');
             if (newsList.length === 0) {
