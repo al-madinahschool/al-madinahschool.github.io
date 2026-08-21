@@ -274,7 +274,7 @@
             <div class="home-content-grid">
                 <main>
                     <h2>Pengumuman Terbaru</h2>
-                    <p>Selamat datang di portal resmi <strong>Islamic School Al-Madinah</strong>. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</p>
+                    <p id="home-announcement-text">Selamat datang di portal resmi <strong>Islamic School Al-Madinah</strong>. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</p>
                     
                     <h2>Visi & Misi</h2>
                     <p>Menjadi institusi pendidikan yang mencetak generasi unggul, berakhlak mulia, dan siap menghadapi tantangan global dengan pondasi agama yang kuat.</p>
@@ -342,7 +342,7 @@
         </div>
     </div>
 
-    <!-- HALAMAN 6: DASHBOARD ADMIN (DENGAN UCAPAN SELAMAT WAKTU & NAMA USER) -->
+    <!-- HALAMAN 6: DASHBOARD ADMIN -->
     <div id="page-admin" class="page-section">
         <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
             <h2>
@@ -357,6 +357,22 @@
 
             <button class="btn-logout" onclick="switchPage('home')">Keluar (Logout)</button>
         </main>
+    </div>
+
+    <!-- HALAMAN TAMBAHAN: KELOLA PENGUMUMAN TERBARU -->
+    <div id="pengumuman-menu" class="page-section">
+        <div class="login-box" style="max-width: 650px;">
+            <h2>Kelola Pengumuman Terbaru</h2>
+            <p style="font-size: 0.9rem; color: #555; text-align: center; margin-bottom: 20px;">Perbarui teks pengumuman utama yang akan tampil di halaman beranda sekolah.</p>
+            <form id="announcementForm" onsubmit="handleUpdateAnnouncement(event)">
+                <div class="form-group">
+                    <label for="announcementText">Isi Pengumuman Beranda</label>
+                    <textarea id="announcementText" rows="6" placeholder="Tuliskan pengumuman terbaru di sini..." required>Selamat datang di portal resmi Islamic School Al-Madinah. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</textarea>
+                </div>
+                <button type="submit" class="btn-login" style="margin-bottom: 10px;">Simpan & Terbitkan Pengumuman</button>
+                <button type="button" class="btn-logout" style="width: 100%; margin-top: 0; background-color: #6c757d;" onclick="switchPage('admin')">Kembali ke Panel Utama</button>
+            </form>
+        </div>
     </div>
 
     <!-- HALAMAN 7: MENU TAMBAH USER (DOWNLOAD, UPLOAD, TABEL & EDIT HAK AKSES) -->
@@ -379,11 +395,12 @@
                 </div>
             </div>
 
-            <!-- Form Edit Hak Akses (Tersembunyi sampai tombol "Hak Akses" diklik) -->
+            <!-- Form Edit Hak Akses -->
             <div id="edit-access-box" style="display: none; background: #fff; border: 2px solid #2E8B57; padding: 20px; border-radius: 8px; margin-top: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
                 <h3 id="edit-access-title" style="color: #2E8B57; margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Pengaturan Hak Akses User</h3>
                 <p style="font-size: 0.9rem; color: #555;">Centang menu yang diizinkan untuk user ini, lalu klik Simpan:</p>
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #f9f9f9; padding: 12px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 15px;">
+                    <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Pengumuman Terbaru"> Pengumuman Terbaru</label>
                     <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Tambah User"> Tambah User</label>
                     <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Berita Terkini"> Berita Terkini</label>
                     <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Data Siswa"> Data Siswa</label>
@@ -497,7 +514,7 @@
                 password: '123456789', 
                 nama: 'Admin Sekolah', 
                 jabatan: 'Administrator', 
-                hak_akses: ['Tambah User', 'Berita Terkini', 'Data Siswa', 'Data Guru', 'Absen Siswa', 'Penjemputan Siswa', 'Absen Karyawan'] 
+                hak_akses: ['Pengumuman Terbaru', 'Tambah User', 'Berita Terkini', 'Data Siswa', 'Data Guru', 'Absen Siswa', 'Penjemputan Siswa', 'Absen Karyawan'] 
             }
         ];
 
@@ -506,6 +523,7 @@
 
         // Daftar konfigurasi menu admin dan izinnya
         const adminMenuConfig = [
+            { title: "📢 Pengumuman Terbaru", desc: "Perbarui teks pengumuman utama di halaman beranda", permission: "Pengumuman Terbaru", action: "switchPage('pengumuman-menu');" },
             { title: "👥 Tambah User", desc: "Download/Upload form excel & atur hak akses user", permission: "Tambah User", action: "switchPage('tambah-user-menu'); renderAllUsersTable();" },
             { title: "📰 Berita Terkini", desc: "Kelola tambah berita dan lihat berita terbit", permission: "Berita Terkini", action: "switchPage('berita-terkini-menu');" },
             { title: "🎓 Data Siswa", desc: "Input dan perbarui data peserta didik baru", permission: "Data Siswa", action: "alert('Membuka formulir: Menambahkan Data Siswa')" },
@@ -555,6 +573,10 @@
         // Fungsi Tombol Navigasi Antar Menu Tanpa Reload Halaman dengan Validasi Hak Akses
         function switchPage(pageId) {
             if (loggedInUser && loggedInUser.username !== 'admin123') {
+                if (pageId === 'pengumuman-menu' && (!loggedInUser.hak_akses || !loggedInUser.hak_akses.includes('Pengumuman Terbaru'))) {
+                    alert('Akses Ditolak! Anda tidak memiliki izin untuk mengelola Pengumuman Terbaru.');
+                    return;
+                }
                 if (pageId === 'tambah-user-menu' && (!loggedInUser.hak_akses || !loggedInUser.hak_akses.includes('Tambah User'))) {
                     alert('Akses Ditolak! Anda tidak memiliki izin untuk membuka menu Tambah User.');
                     return;
@@ -576,6 +598,17 @@
                 backToHomeFeed();
             }
             window.scrollTo(0, 0); 
+        }
+
+        // Fungsi Memperbarui Pengumuman Terbaru di Beranda
+        function handleUpdateAnnouncement(event) {
+            event.preventDefault();
+            const text = document.getElementById('announcementText').value.trim();
+            if (text) {
+                document.getElementById('home-announcement-text').innerHTML = text.replace(/\n/g, '<br>');
+                alert('Pengumuman terbaru berhasil diperbarui dan ditayangkan di beranda!');
+                switchPage('admin');
+            }
         }
 
         // Fungsi Menghasilkan Ucapan Berdasarkan Waktu & Nama User
@@ -605,7 +638,6 @@
             if (validUser) {
                 loggedInUser = validUser; 
                 
-                // Set ucapan selamat di sebelah kanan judul Panel Admin
                 const greetingEl = document.getElementById('user-greeting');
                 if (greetingEl) {
                     greetingEl.innerText = getGreeting(validUser.nama);
@@ -672,7 +704,7 @@
 
         // --- FITUR DOWNLOAD, UPLOAD, DAN TABEL USER ---
         function downloadUserTemplate() {
-            const csvContent = "username,password,nama_pengguna,jabatan,hak_akses\nguru01,rahasia123,Siti Aminah,Guru Kelas 1,Tambah User;Berita Terkini\nsiswa01,123456,Budi Santoso,Siswa,Absen Siswa\n";
+            const csvContent = "username,password,nama_pengguna,jabatan,hak_akses\nguru01,rahasia123,Siti Aminah,Guru Kelas 1,Pengumuman Terbaru;Tambah User\nsiswa01,123456,Budi Santoso,Siswa,Absen Siswa\n";
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
