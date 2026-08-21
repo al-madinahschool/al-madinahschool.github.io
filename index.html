@@ -76,7 +76,7 @@
             text-decoration: underline;
             color: #ffcc00;
         }
-        /* Layout Grid Beranda (Kiri: Pengumuman/Visi Misi, Kanan: Berita Terkini) */
+        /* Layout Grid Beranda */
         .home-content-grid {
             max-width: 900px;
             margin: 30px auto;
@@ -251,7 +251,6 @@
     
     <!-- HALAMAN 1: BERANDA -->
     <div id="page-home" class="page-section active-page">
-        <!-- Tampilan Utama Beranda (Slider & Grid Berita) -->
         <div id="home-main-view">
             <div class="slider-container">
                 <img src="foto1.jpg" class="slide active" alt="Galeri Sekolah 1">
@@ -277,7 +276,6 @@
             </div>
         </div>
 
-        <!-- Tampilan Detail Berita (Muncul Saat Berita Diklik) -->
         <div id="news-detail-view" style="display: none; max-width: 900px; margin: 30px auto; padding: 0 20px;">
             <main style="max-width: 100%;">
                 <button onclick="backToHomeFeed()" style="background-color: #2E8B57; color: white; border: none; padding: 8px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-bottom: 20px;">← Kembali ke Beranda</button>
@@ -338,9 +336,9 @@
             <p>Selamat datang, <strong>Admin</strong>. Pilih menu manajemen di bawah ini untuk mengelola data *website* sekolah:</p>
             
             <div class="admin-grid">
-                <div class="admin-card" onclick="alert('Membuka formulir: Menambahkan User baru')">
+                <div class="admin-card" onclick="renderAllUsersTable(); switchPage('tambah-user-menu')">
                     <h3>👥 Tambah User</h3>
-                    <p>Kelola akun dan hak akses pengguna sistem</p>
+                    <p>Unduh form excel dan kelola data pengguna baru</p>
                 </div>
                 <div class="admin-card" onclick="switchPage('berita-terkini-menu')">
                     <h3>📰 Berita Terkini</h3>
@@ -376,7 +374,39 @@
         </main>
     </div>
 
-    <!-- HALAMAN 7: SUB-MENU BERITA TERKINI -->
+    <!-- HALAMAN 7: MENU TAMBAH USER (DOWNLOAD, UPLOAD & RINCIAN TABEL USER) -->
+    <div id="tambah-user-menu" class="page-section">
+        <main style="max-width: 850px; margin: 30px auto;" class="admin-dashboard">
+            <h2>Manajemen Tambah User (Excel)</h2>
+            <p>Gunakan templat Excel untuk mendaftarkan akun, atau lihat daftar rincian pengguna yang telah terdaftar di bawah ini:</p>
+            
+            <div class="admin-grid" style="margin-top: 20px;">
+                <!-- Kotak Download Form -->
+                <div class="admin-card" onclick="downloadUserTemplate()" style="border-color: #0275d8; background-color: #f0f8ff;">
+                    <h3 style="color: #0275d8;">📥 Download Form</h3>
+                    <p>Unduh templat Excel (.csv) berisi kolom data user</p>
+                </div>
+                <!-- Kotak Upload Form -->
+                <div class="admin-card" onclick="document.getElementById('excelFileInput').click()" style="border-color: #5cb85c; background-color: #f0fff0;">
+                    <h3 style="color: #5cb85c;">📤 Upload Form</h3>
+                    <p>Unggah file Excel yang telah diisi data pengguna</p>
+                    <input type="file" id="excelFileInput" accept=".csv, .xlsx, .xls" style="display: none;" onchange="handleUploadExcel(event)">
+                </div>
+            </div>
+
+            <!-- Tabel Rincian Semua User Terdaftar -->
+            <div style="margin-top: 35px;">
+                <h3 style="color: #2E8B57; border-bottom: 2px solid #2E8B57; padding-bottom: 8px;">📋 Rincian Semua User Terdaftar</h3>
+                <div id="all-users-table-container" style="margin-top: 15px; overflow-x: auto;">
+                    <!-- Tabel akan dimuat otomatis oleh JavaScript -->
+                </div>
+            </div>
+
+            <button class="btn-logout" style="background-color: #6c757d; margin-top: 30px;" onclick="switchPage('admin')">Kembali ke Panel Utama</button>
+        </main>
+    </div>
+
+    <!-- HALAMAN 8: SUB-MENU BERITA TERKINI -->
     <div id="berita-terkini-menu" class="page-section">
         <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
             <h2>Manajemen Berita Terkini</h2>
@@ -397,7 +427,7 @@
         </main>
     </div>
 
-    <!-- HALAMAN 8: TAMBAH BERITA -->
+    <!-- HALAMAN 9: TAMBAH BERITA -->
     <div id="tambah-berita" class="page-section">
         <div class="login-box">
             <h2>Tambah Berita Baru</h2>
@@ -420,7 +450,7 @@
         </div>
     </div>
 
-    <!-- HALAMAN 9: BERITA DITERBITKAN -->
+    <!-- HALAMAN 10: BERITA DITERBITKAN -->
     <div id="berita-list" class="page-section">
         <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
             <h2>Daftar Berita Diterbitkan</h2>
@@ -432,7 +462,7 @@
         </main>
     </div>
 
-    <!-- HALAMAN 10: UBAH PROFIL ADMIN -->
+    <!-- HALAMAN 11: UBAH PROFIL ADMIN -->
     <div id="page-admin-profil" class="page-section">
         <div class="login-box">
             <h2>Ubah Profil Admin</h2>
@@ -459,6 +489,11 @@
         let adminUser = 'admin123';
         let adminPass = '123456789';
         let newsList = [];
+        
+        // Daftar Master User (Default berisi Admin Utama)
+        let usersList = [
+            { username: 'admin123', password: '123456789', nama: 'Admin Sekolah', jabatan: 'Administrator' }
+        ];
 
         // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
         function updateDateTime() {
@@ -506,7 +541,6 @@
             if (target) {
                 target.classList.add('active-page');
             }
-            // Pastikan kembali ke tampilan utama beranda jika masuk halaman home
             if(pageId === 'home') {
                 backToHomeFeed();
             }
@@ -519,8 +553,11 @@
             const userInput = document.getElementById('username').value.trim();
             const passInput = document.getElementById('password').value.trim();
 
-            if (userInput === adminUser && passInput === adminPass) {
-                alert('Login Berhasil! Selamat datang Admin.');
+            // Cek kecocokan dengan data terbaru di usersList
+            let validUser = usersList.find(u => u.username === userInput && u.password === passInput);
+
+            if (validUser) {
+                alert(`Login Berhasil! Selamat datang ${validUser.nama} (${validUser.jabatan}).`);
                 document.getElementById('loginForm').reset();
                 switchPage('admin'); 
             } else {
@@ -537,13 +574,96 @@
             if (newU && newP) {
                 adminUser = newU;
                 adminPass = newP;
+                // Perbarui juga data di baris admin utama
+                usersList[0].username = newU;
+                usersList[0].password = newP;
                 alert('Profil berhasil diperbarui!');
                 document.getElementById('profileForm').reset();
                 switchPage('admin');
             }
         }
 
-        // Fungsi Menambah Berita Baru
+        // --- FITUR DOWNLOAD, UPLOAD, & TABEL RINCIAN USER ---
+        function downloadUserTemplate() {
+            const csvContent = "username,password,nama_pengguna,jabatan\nguru01,rahasia123,Siti Aminah,Guru Kelas 1\nsiswa01,123456,Budi Santoso,Siswa\n";
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'templat_tambah_user.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        function handleUploadExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                const lines = text.split('\n');
+                let countNew = 0;
+
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line) {
+                        const cols = line.split(',');
+                        if (cols.length >= 4) {
+                            usersList.push({
+                                username: cols[0].trim(),
+                                password: cols[1].trim(),
+                                nama: cols[2].trim(),
+                                jabatan: cols[3].trim()
+                            });
+                            countNew++;
+                        }
+                    }
+                }
+
+                renderAllUsersTable();
+                alert(`Berhasil mengunggah dan menambahkan ${countNew} data pengguna baru ke sistem!`);
+                event.target.value = ''; 
+            };
+            reader.readAsText(file);
+        }
+
+        function renderAllUsersTable() {
+            const container = document.getElementById('all-users-table-container');
+            if (usersList.length === 0) {
+                container.innerHTML = '<p style="color: #666; font-style: italic;">Belum ada user terdaftar.</p>';
+                return;
+            }
+
+            let html = '<table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; text-align: left;">';
+            html += '<tr style="background-color: #2E8B57; color: white;"><th style="padding: 10px; border: 1px solid #ddd;">No</th><th style="padding: 10px; border: 1px solid #ddd;">Username</th><th style="padding: 10px; border: 1px solid #ddd;">Password</th><th style="padding: 10px; border: 1px solid #ddd;">Nama Pengguna</th><th style="padding: 10px; border: 1px solid #ddd;">Jabatan</th><th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Aksi</th></tr>';
+            
+            usersList.forEach((u, index) => {
+                html += `<tr>
+                    <td style="padding: 9px; border: 1px solid #ddd; text-align: center;">${index + 1}</td>
+                    <td style="padding: 9px; border: 1px solid #ddd;">${u.username}</td>
+                    <td style="padding: 9px; border: 1px solid #ddd;">${u.password}</td>
+                    <td style="padding: 9px; border: 1px solid #ddd;">${u.nama}</td>
+                    <td style="padding: 9px; border: 1px solid #ddd;">${u.jabatan}</td>
+                    <td style="padding: 9px; border: 1px solid #ddd; text-align: center;">
+                        <button onclick="deleteUser(${index})" style="background-color: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Hapus</button>
+                    </td>
+                </tr>`;
+            });
+            html += '</table>';
+            container.innerHTML = html;
+        }
+
+        function deleteUser(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus user ini dari sistem?')) {
+                usersList.splice(index, 1);
+                renderAllUsersTable();
+                alert('User berhasil dihapus!');
+            }
+        }
+
+        // Fungsi Berita
         function handleAddNews(event) {
             event.preventDefault();
             const title = document.getElementById('newsTitle').value;
@@ -583,7 +703,6 @@
             switchPage('home');
         }
 
-        // Fungsi Menampilkan Daftar Berita di Sidebar Beranda
         function renderNewsFeed() {
             const container = document.getElementById('dynamic-news-container');
             if (newsList.length === 0) {
@@ -605,7 +724,6 @@
             container.innerHTML = html;
         }
 
-        // Fungsi Membuka Tampilan Detail Berita Lengkap
         function showNewsDetail(index) {
             const item = newsList[index];
             document.getElementById('detail-date').innerText = `📅 Dipublikasikan pada: ${item.date}`;
@@ -620,20 +738,17 @@
             document.getElementById('detail-media').innerHTML = largeMediaHtml;
             document.getElementById('detail-content').innerText = item.content;
 
-            // Sembunyikan grid utama beranda, tampilkan kotak detail berita
             document.getElementById('home-main-view').style.display = 'none';
             document.getElementById('news-detail-view').style.display = 'block';
             window.scrollTo(0, 0);
         }
 
-        // Fungsi Kembali ke Tampilan Utama Beranda
         function backToHomeFeed() {
             document.getElementById('news-detail-view').style.display = 'none';
             document.getElementById('home-main-view').style.display = 'block';
             window.scrollTo(0, 0);
         }
 
-        // Fungsi Manajemen Berita di Panel Admin
         function renderNewsManagement() {
             const container = document.getElementById('admin-news-list-container');
             if (newsList.length === 0) {
@@ -657,7 +772,6 @@
             container.innerHTML = html;
         }
 
-        // Fungsi Menghapus Berita
         function deleteNews(index) {
             if (confirm('Apakah Anda yakin ingin menghapus berita ini dari website?')) {
                 newsList.splice(index, 1);
