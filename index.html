@@ -85,7 +85,7 @@
             border-radius: 8px;
             line-height: 1.6;
         }
-        /* Style untuk Menu Login */
+        /* Style untuk Menu Login & Form Profil */
         .login-box {
             max-width: 400px;
             margin: 0 auto;
@@ -309,9 +309,34 @@
                     <h3>📋 Absen Karyawan</h3>
                     <p>Rekap kehadiran guru dan staf pegawai</p>
                 </div>
+                <div class="admin-card" onclick="switchPage('admin-profil')" style="border-color: #2E8B57; background-color: #eaf4ed;">
+                    <h3>⚙️ Profil Akun</h3>
+                    <p>Ubah username dan kata sandi admin</p>
+                </div>
             </div>
 
             <button class="btn-logout" onclick="switchPage('home')">Keluar (Logout)</button>
+        </main>
+    </div>
+
+    <!-- HALAMAN 7: UBAH PROFIL ADMIN (Ubah Username & Password) -->
+    <div id="page-admin-profil" class="page-section">
+        <main>
+            <div class="login-box">
+                <h2>Ubah Profil Admin</h2>
+                <form id="profileForm" onsubmit="handleUpdateProfile(event)">
+                    <div class="form-group">
+                        <label for="newUsername">Username Baru</label>
+                        <input type="text" id="newUsername" placeholder="Masukkan username baru..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Kata Sandi Baru</label>
+                        <input type="password" id="newPassword" placeholder="Masukkan kata sandi baru..." required>
+                    </div>
+                    <button type="submit" class="btn-login" style="margin-bottom: 10px;">Simpan Perubahan</button>
+                    <button type="button" class="btn-logout" style="width: 100%; margin-top: 0; background-color: #6c757d;" onclick="switchPage('admin')">Kembali ke Panel</button>
+                </form>
+            </div>
         </main>
     </div>
 
@@ -320,6 +345,10 @@
     </footer>
 
     <script>
+        // Kredensial Login Admin (Bisa Berubah Dinamis)
+        let adminUser = 'admin123';
+        let adminPass = '123456789';
+
         // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
         function updateDateTime() {
             const now = new Date();
@@ -375,12 +404,27 @@
             const userInput = document.getElementById('username').value.trim();
             const passInput = document.getElementById('password').value.trim();
 
-            if (userInput === 'admin123' && passInput === '123456789') {
+            if (userInput === adminUser && passInput === adminPass) {
                 alert('Login Berhasil! Selamat datang Admin.');
                 document.getElementById('loginForm').reset();
                 switchPage('admin'); 
             } else {
                 alert('Username atau Password salah! Silakan coba lagi.');
+            }
+        }
+
+        // Fungsi Mengubah Username & Password Admin
+        function handleUpdateProfile(event) {
+            event.preventDefault();
+            const newU = document.getElementById('newUsername').value.trim();
+            const newP = document.getElementById('newPassword').value.trim();
+
+            if (newU && newP) {
+                adminUser = newU;
+                adminPass = newP;
+                alert('Profil berhasil diperbarui! Silakan gunakan Username dan Kata Sandi baru untuk login berikutnya.');
+                document.getElementById('profileForm').reset();
+                switchPage('admin');
             }
         }
     </script>
