@@ -314,7 +314,7 @@
     <!-- HALAMAN 5: LOGIN / MASUK -->
     <div id="page-login" class="page-section">
         <div class="login-box">
-            <h2>Portal Masuk Admin</h2>
+            <h2>Portal Masuk Pengguna</h2>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label for="username">Username</label>
@@ -329,45 +329,14 @@
         </div>
     </div>
 
-    <!-- HALAMAN 6: DASHBOARD ADMIN -->
+    <!-- HALAMAN 6: DASHBOARD ADMIN (MENU DINAMIS BERDASARKAN HAK AKSES) -->
     <div id="page-admin" class="page-section">
         <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
-            <h2>Panel Admin Sekolah</h2>
-            <p>Selamat datang, <strong>Admin</strong>. Pilih menu manajemen di bawah ini untuk mengelola data *website* sekolah:</p>
+            <h2>Panel Manajemen Sekolah</h2>
+            <p>Selamat datang, <strong id="welcome-user-name">Admin</strong> (<span id="welcome-user-jabatan">Administrator</span>). Menu di bawah ini disesuaikan dengan hak akses akun Anda:</p>
             
-            <div class="admin-grid">
-                <div class="admin-card" onclick="renderAllUsersTable(); switchPage('tambah-user-menu')">
-                    <h3>👥 Tambah User</h3>
-                    <p>Download/Upload form excel & atur hak akses user</p>
-                </div>
-                <div class="admin-card" onclick="switchPage('berita-terkini-menu')">
-                    <h3>📰 Berita Terkini</h3>
-                    <p>Kelola tambah berita dan lihat berita terbit</p>
-                </div>
-                <div class="admin-card" onclick="alert('Membuka formulir: Menambahkan Data Siswa')">
-                    <h3>🎓 Data Siswa</h3>
-                    <p>Input dan perbarui data peserta didik baru</p>
-                </div>
-                <div class="admin-card" onclick="alert('Membuka formulir: Menambahkan Data Guru')">
-                    <h3>👩‍🏫 Data Guru</h3>
-                    <p>Kelola profil dan daftar tenaga pengajar</p>
-                </div>
-                <div class="admin-card" onclick="alert('Membuka menu: Absen Siswa')">
-                    <h3>📝 Absen Siswa</h3>
-                    <p>Pantau rekapitulasi kehadiran harian siswa</p>
-                </div>
-                <div class="admin-card" onclick="alert('Membuka menu: Penjemputan Siswa')">
-                    <h3>🚗 Penjemputan Siswa</h3>
-                    <p>Kelola status dan log penjemputan anak sekolah</p>
-                </div>
-                <div class="admin-card" onclick="alert('Membuka menu: Absen Karyawan')">
-                    <h3>📋 Absen Karyawan</h3>
-                    <p>Rekap kehadiran guru dan staf pegawai</p>
-                </div>
-                <div class="admin-card" onclick="switchPage('admin-profil')" style="border-color: #2E8B57; background-color: #eaf4ed;">
-                    <h3>⚙️ Profil Akun</h3>
-                    <p>Ubah username dan kata sandi admin</p>
-                </div>
+            <div class="admin-grid" id="admin-cards-grid">
+                <!-- Menu akan dimuat secara dinamis oleh JavaScript sesuai hak akses user -->
             </div>
 
             <button class="btn-logout" onclick="switchPage('home')">Keluar (Logout)</button>
@@ -482,7 +451,7 @@
     <!-- HALAMAN 11: UBAH PROFIL ADMIN -->
     <div id="page-admin-profil" class="page-section">
         <div class="login-box">
-            <h2>Ubah Profil Admin</h2>
+            <h2>Ubah Profil Akun</h2>
             <form id="profileForm" onsubmit="handleUpdateProfile(event)">
                 <div class="form-group">
                     <label for="newUsername">Username Baru</label>
@@ -503,11 +472,9 @@
     </footer>
 
     <script>
-        let adminUser = 'admin123';
-        let adminPass = '123456789';
         let newsList = [];
         
-        // Daftar Master User (Default Admin Utama)
+        // Daftar Master User (Default Admin Utama dengan Akses Penuh)
         let usersList = [
             { 
                 username: 'admin123', 
@@ -518,7 +485,19 @@
             }
         ];
 
+        let loggedInUser = null; // Menyimpan user yang sedang login
         let editingUserIndex = null;
+
+        // Daftar konfigurasi menu admin dan izinnya
+        const adminMenuConfig = [
+            { title: "👥 Tambah User", desc: "Download/Upload form excel & atur hak akses user", permission: "Tambah User", action: "switchPage('tambah-user-menu'); renderAllUsersTable();" },
+            { title: "📰 Berita Terkini", desc: "Kelola tambah berita dan lihat berita terbit", permission: "Berita Terkini", action: "switchPage('berita-terkini-menu');" },
+            { title: "🎓 Data Siswa", desc: "Input dan perbarui data peserta didik baru", permission: "Data Siswa", action: "alert('Membuka formulir: Menambahkan Data Siswa')" },
+            { title: "👩‍🏫 Data Guru", desc: "Kelola profil dan daftar tenaga pengajar", permission: "Data Guru", action: "alert('Membuka formulir: Menambahkan Data Guru')" },
+            { title: "📝 Absen Siswa", desc: "Pantau rekapitulasi kehadiran harian siswa", permission: "Absen Siswa", action: "alert('Membuka menu: Absen Siswa')" },
+            { title: "🚗 Penjemputan Siswa", desc: "Kelola status dan log penjemputan anak sekolah", permission: "Penjemputan Siswa", action: "alert('Membuka menu: Penjemputan Siswa')" },
+            { title: "📋 Absen Karyawan", desc: "Rekap kehadiran guru dan staf pegawai", permission: "Absen Karyawan", action: "alert('Membuka menu: Absen Karyawan')" }
+        ];
 
         // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
         function updateDateTime() {
@@ -557,8 +536,20 @@
 
         setInterval(nextSlide, 3000);
 
-        // Fungsi Tombol Navigasi Antar Menu Tanpa Reload Halaman
+        // Fungsi Tombol Navigasi Antar Menu Tanpa Reload Halaman dengan Validasi Hak Akses
         function switchPage(pageId) {
+            // Validasi Hak Akses sebelum membuka halaman tertentu
+            if (loggedInUser && loggedInUser.username !== 'admin123') {
+                if (pageId === 'tambah-user-menu' && (!loggedInUser.hak_akses || !loggedInUser.hak_akses.includes('Tambah User'))) {
+                    alert('Akses Ditolak! Anda tidak memiliki izin untuk membuka menu Tambah User.');
+                    return;
+                }
+                if (pageId === 'berita-terkini-menu' && (!loggedInUser.hak_akses || !loggedInUser.hak_akses.includes('Berita Terkini'))) {
+                    alert('Akses Ditolak! Anda tidak memiliki izin untuk membuka menu Berita Terkini.');
+                    return;
+                }
+            }
+
             const sections = document.querySelectorAll('.page-section');
             sections.forEach(sec => sec.classList.remove('active-page'));
             
@@ -572,7 +563,7 @@
             window.scrollTo(0, 0); 
         }
 
-        // Fungsi Validasi Login Admin
+        // Fungsi Validasi Login & Menampilkan Dashboard Sesuai Hak Akses
         function handleLogin(event) {
             event.preventDefault();
             const userInput = document.getElementById('username').value.trim();
@@ -581,6 +572,12 @@
             let validUser = usersList.find(u => u.username === userInput && u.password === passInput);
 
             if (validUser) {
+                loggedInUser = validUser; // Simpan sesi user yang sedang login
+                document.getElementById('welcome-user-name').innerText = validUser.nama;
+                document.getElementById('welcome-user-jabatan').innerText = validUser.jabatan;
+
+                renderAdminDashboard(); // Buat kartu menu dinamis sesuai izin user
+
                 alert(`Login Berhasil! Selamat datang ${validUser.nama} (${validUser.jabatan}).`);
                 document.getElementById('loginForm').reset();
                 switchPage('admin'); 
@@ -589,18 +586,52 @@
             }
         }
 
-        // Fungsi Mengubah Username & Password Admin
+        // Fungsi Render Dashboard Admin secara Dinamis Berdasarkan Hak Akses
+        function renderAdminDashboard() {
+            const container = document.getElementById('admin-cards-grid');
+            if (!container) return;
+
+            let html = '';
+            adminMenuConfig.forEach(menu => {
+                let hasAccess = false;
+                if (loggedInUser) {
+                    if (loggedInUser.username === 'admin123' || (loggedInUser.hak_akses && loggedInUser.hak_akses.includes(menu.permission))) {
+                        hasAccess = true;
+                    }
+                }
+
+                // Tampilkan hanya kartu menu yang diizinkan
+                if (hasAccess) {
+                    html += `
+                        <div class="admin-card" onclick="${menu.action}">
+                            <h3>${menu.title}</h3>
+                            <p>${menu.desc}</p>
+                        </div>
+                    `;
+                }
+            });
+
+            // Kartu Profil Akun selalu tersedia untuk semua user
+            html += `
+                <div class="admin-card" onclick="switchPage('admin-profil')" style="border-color: #2E8B57; background-color: #eaf4ed;">
+                    <h3>⚙️ Profil Akun</h3>
+                    <p>Ubah username dan kata sandi akun</p>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Fungsi Mengubah Username & Password Akun yang Sedang Login
         function handleUpdateProfile(event) {
             event.preventDefault();
             const newU = document.getElementById('newUsername').value.trim();
             const newP = document.getElementById('newPassword').value.trim();
 
-            if (newU && newP) {
-                adminUser = newU;
-                adminPass = newP;
-                usersList[0].username = newU;
-                usersList[0].password = newP;
-                alert('Profil berhasil diperbarui!');
+            if (newU && newP && loggedInUser) {
+                loggedInUser.username = newU;
+                loggedInUser.password = newP;
+                alert('Profil akun berhasil diperbarui!');
                 document.getElementById('profileForm').reset();
                 switchPage('admin');
             }
