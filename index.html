@@ -376,15 +376,15 @@
 
     <!-- HALAMAN 7: MENU TAMBAH USER (DOWNLOAD, UPLOAD & RINCIAN TABEL USER) -->
     <div id="tambah-user-menu" class="page-section">
-        <main style="max-width: 850px; margin: 30px auto;" class="admin-dashboard">
+        <main style="max-width: 900px; margin: 30px auto;" class="admin-dashboard">
             <h2>Manajemen Tambah User (Excel / CSV)</h2>
-            <p>Unduh templat format CSV, isi datanya, lalu unggah kembali untuk mendaftarkan akun secara massal:</p>
+            <p>Unduh templat format CSV, isi datanya (termasuk hak akses), lalu unggah kembali untuk mendaftarkan akun:</p>
             
             <div class="admin-grid" style="margin-top: 20px;">
                 <!-- Kotak Download Form -->
                 <div class="admin-card" onclick="downloadUserTemplate()" style="border-color: #0275d8; background-color: #f0f8ff;">
                     <h3 style="color: #0275d8;">📥 Download Form</h3>
-                    <p>Unduh templat format CSV berisi kolom data user</p>
+                    <p>Unduh templat format CSV berisi kolom user & hak akses</p>
                 </div>
                 <!-- Kotak Upload Form -->
                 <div class="admin-card" onclick="document.getElementById('excelFileInput').click()" style="border-color: #5cb85c; background-color: #f0fff0;">
@@ -490,9 +490,9 @@
         let adminPass = '123456789';
         let newsList = [];
         
-        // Daftar Master User (Default berisi Admin Utama)
+        // Daftar Master User (Default berisi Admin Utama dengan Hak Akses Administrator)
         let usersList = [
-            { username: 'admin123', password: '123456789', nama: 'Admin Sekolah', jabatan: 'Administrator' }
+            { username: 'admin123', password: '123456789', nama: 'Admin Sekolah', jabatan: 'Administrator', hak_akses: 'Full Akses' }
         ];
 
         // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
@@ -556,7 +556,7 @@
             let validUser = usersList.find(u => u.username === userInput && u.password === passInput);
 
             if (validUser) {
-                alert(`Login Berhasil! Selamat datang ${validUser.nama} (${validUser.jabatan}).`);
+                alert(`Login Berhasil! Selamat datang ${validUser.nama} (${validUser.jabatan} - Hak Akses: ${validUser.hak_akses}).`);
                 document.getElementById('loginForm').reset();
                 switchPage('admin'); 
             } else {
@@ -581,9 +581,9 @@
             }
         }
 
-        // --- FITUR DOWNLOAD, UPLOAD, & TABEL RINCIAN USER ---
+        // --- FITUR DOWNLOAD, UPLOAD, & TABEL RINCIAN USER DENGAN HAK AKSES ---
         function downloadUserTemplate() {
-            const csvContent = "username,password,nama_pengguna,jabatan\nguru01,rahasia123,Siti Aminah,Guru Kelas 1\nsiswa01,123456,Budi Santoso,Siswa\n";
+            const csvContent = "username,password,nama_pengguna,jabatan,hak_akses\nguru01,rahasia123,Siti Aminah,Guru Kelas 1,Akses Guru & Absensi\nsiswa01,123456,Budi Santoso,Siswa,Akses Siswa Saja\n";
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -602,7 +602,6 @@
             reader.onload = function(e) {
                 const text = e.target.result;
                 
-                // Cek pengaman jika yang diunggah file excel .xlsx mentah
                 if (text.includes('PK') || text.includes('xl/')) {
                     alert('Format file salah! Harap unggah file berformat CSV (hasil unduhan dari tombol Download Form), bukan file Excel .xlsx asli.');
                     event.target.value = '';
@@ -616,12 +615,23 @@
                     const line = lines[i].trim();
                     if (line) {
                         const cols = line.split(',');
-                        if (cols.length >= 4) {
+                        if (cols.length >= 5) {
                             usersList.push({
                                 username: cols[0].trim(),
                                 password: cols[1].trim(),
                                 nama: cols[2].trim(),
-                                jabatan: cols[3].trim()
+                                jabatan: cols[3].trim(),
+                                hak_akses: cols[4].trim()
+                            });
+                            countNew++;
+                        } else if (cols.length >= 4) {
+                            // Kompatibilitas jika file lama hanya 4 kolom
+                            usersList.push({
+                                username: cols[0].trim(),
+                                password: cols[1].trim(),
+                                nama: cols[2].trim(),
+                                jabatan: cols[3].trim(),
+                                hak_akses: 'Standar'
                             });
                             countNew++;
                         }
@@ -643,7 +653,7 @@
             }
 
             let html = '<table style="width: 100%; border-collapse: collapse; font-size: 0.95rem; text-align: left;">';
-            html += '<tr style="background-color: #2E8B57; color: white;"><th style="padding: 10px; border: 1px solid #ddd;">No</th><th style="padding: 10px; border: 1px solid #ddd;">Username</th><th style="padding: 10px; border: 1px solid #ddd;">Password</th><th style="padding: 10px; border: 1px solid #ddd;">Nama Pengguna</th><th style="padding: 10px; border: 1px solid #ddd;">Jabatan</th><th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Aksi</th></tr>';
+            html += '<tr style="background-color: #2E8B57; color: white;"><th style="padding: 10px; border: 1px solid #ddd;">No</th><th style="padding: 10px; border: 1px solid #ddd;">Username</th><th style="padding: 10px; border: 1px solid #ddd;">Password</th><th style="padding: 10px; border: 1px solid #ddd;">Nama Pengguna</th><th style="padding: 10px; border: 1px solid #ddd;">Jabatan</th><th style="padding: 10px; border: 1px solid #ddd;">Hak Akses</th><th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Aksi</th></tr>';
             
             usersList.forEach((u, index) => {
                 html += `<tr>
@@ -652,6 +662,7 @@
                     <td style="padding: 9px; border: 1px solid #ddd;">${u.password}</td>
                     <td style="padding: 9px; border: 1px solid #ddd;">${u.nama}</td>
                     <td style="padding: 9px; border: 1px solid #ddd;">${u.jabatan}</td>
+                    <td style="padding: 9px; border: 1px solid #ddd;"><span style="background: #e2f0d9; color: #274e13; padding: 3px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold;">${u.hak_akses || 'Standar'}</span></td>
                     <td style="padding: 9px; border: 1px solid #ddd; text-align: center;">
                         <button onclick="deleteUser(${index})" style="background-color: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Hapus</button>
                     </td>
