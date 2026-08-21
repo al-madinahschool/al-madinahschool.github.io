@@ -125,6 +125,58 @@
         .btn-login:hover {
             background-color: #1a5c38;
         }
+        /* Style untuk Dashboard Admin */
+        .admin-dashboard h2 {
+            color: #2E8B57;
+            border-bottom: 2px solid #2E8B57;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .admin-card {
+            background-color: #f4f7f6;
+            border: 1px solid #dcdcdc;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .admin-card:hover {
+            background-color: #2E8B57;
+            color: white;
+            border-color: #2E8B57;
+        }
+        .admin-card h3 {
+            margin: 0 0 10px 0;
+            font-size: 1.2rem;
+        }
+        .admin-card p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        .admin-card:hover p {
+            color: #e2e8f0;
+        }
+        .btn-logout {
+            margin-top: 20px;
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-logout:hover {
+            background-color: #c9302c;
+        }
         /* Pengaturan Tampilan Halaman Aktif */
         .page-section {
             display: none;
@@ -206,11 +258,11 @@
     <div id="page-login" class="page-section">
         <main>
             <div class="login-box">
-                <h2>Portal Masuk Pengguna</h2>
-                <form onsubmit="event.preventDefault(); alert('Fitur login berhasil diuji!');">
+                <h2>Portal Masuk Admin</h2>
+                <form id="loginForm" onsubmit="handleLogin(event)">
                     <div class="form-group">
-                        <label for="username">NISN / Username / Email</label>
-                        <input type="text" id="username" placeholder="Masukkan ID pengguna..." required>
+                        <label for="username">Username</label>
+                        <input type="text" id="username" placeholder="Masukkan username..." required>
                     </div>
                     <div class="form-group">
                         <label for="password">Kata Sandi</label>
@@ -219,6 +271,35 @@
                     <button type="submit" class="btn-login">Masuk ke Sistem</button>
                 </form>
             </div>
+        </main>
+    </div>
+
+    <!-- HALAMAN 6: DASHBOARD ADMIN (Tampil Setelah Login Sukses) -->
+    <div id="page-admin" class="page-section">
+        <main class="admin-dashboard">
+            <h2>Panel Admin Sekolah</h2>
+            <p>Selamat datang, <strong>Admin</strong>. Pilih menu manajemen di bawah ini untuk mengelola data *website* sekolah:</p>
+            
+            <div class="admin-grid">
+                <div class="admin-card" onclick="alert('Membuka formulir: Menambahkan User baru')">
+                    <h3>👥 Tambah User</h3>
+                    <p>Kelola akun dan hak akses pengguna sistem</p>
+                </div>
+                <div class="admin-card" onclick="alert('Membuka formulir: Menambahkan Berita Terkini')">
+                    <h3>📰 Tambah Berita</h3>
+                    <p>Buat dan terbitkan pengumuman serta berita sekolah</p>
+                </div>
+                <div class="admin-card" onclick="alert('Membuka formulir: Menambahkan Data Siswa')">
+                    <h3>🎓 Data Siswa</h3>
+                    <p>Input dan perbarui data peserta didik baru</p>
+                </div>
+                <div class="admin-card" onclick="alert('Membuka formulir: Menambahkan Data Guru')">
+                    <h3>👩‍🏫 Data Guru</h3>
+                    <p>Kelola profil dan daftar tenaga pengajar</p>
+                </div>
+            </div>
+
+            <button class="btn-logout" onclick="switchPage('home')">Keluar (Logout)</button>
         </main>
     </div>
 
@@ -273,7 +354,22 @@
             if (target) {
                 target.classList.add('active-page');
             }
-            window.scrollTo(0, 0); // Otomatis menggulir ke atas saat menu diklik
+            window.scrollTo(0, 0); 
+        }
+
+        // Fungsi Validasi Login Admin
+        function handleLogin(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('username').value.trim();
+            const passInput = document.getElementById('password').value.trim();
+
+            if (userInput === 'admin123' && passInput === '123456789') {
+                alert('Login Berhasil! Selamat datang Admin.');
+                document.getElementById('loginForm').reset();
+                switchPage('admin'); // Pindah ke halaman Dashboard Admin
+            } else {
+                alert('Username atau Password salah! Silakan coba lagi.');
+            }
         }
     </script>
 </body>
