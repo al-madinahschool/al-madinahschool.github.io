@@ -85,9 +85,9 @@
             border-radius: 8px;
             line-height: 1.6;
         }
-        /* Style untuk Menu Login & Form Profil */
+        /* Style untuk Menu Login & Form */
         .login-box {
-            max-width: 400px;
+            max-width: 500px;
             margin: 0 auto;
             padding: 10px;
         }
@@ -104,12 +104,13 @@
             margin-bottom: 5px;
             font-weight: bold;
         }
-        .form-group input {
+        .form-group input, .form-group textarea {
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-family: Arial, sans-serif;
         }
         .btn-login {
             width: 100%;
@@ -274,7 +275,7 @@
         </main>
     </div>
 
-    <!-- HALAMAN 6: DASHBOARD ADMIN (Tampil Setelah Login Sukses) -->
+    <!-- HALAMAN 6: DASHBOARD ADMIN -->
     <div id="page-admin" class="page-section">
         <main class="admin-dashboard">
             <h2>Panel Admin Sekolah</h2>
@@ -285,7 +286,7 @@
                     <h3>👥 Tambah User</h3>
                     <p>Kelola akun dan hak akses pengguna sistem</p>
                 </div>
-                <div class="admin-card" onclick="alert('Membuka formulir: Menambahkan Berita Terkini')">
+                <div class="admin-card" onclick="switchPage('tambah-berita')">
                     <h3>📰 Tambah Berita</h3>
                     <p>Buat dan terbitkan pengumuman serta berita sekolah</p>
                 </div>
@@ -319,7 +320,32 @@
         </main>
     </div>
 
-    <!-- HALAMAN 7: UBAH PROFIL ADMIN (Ubah Username & Password) -->
+    <!-- HALAMAN 7: TAMBAH BERITA TERKINI -->
+    <div id="tambah-berita" class="page-section">
+        <main>
+            <div class="login-box">
+                <h2>Tambah Berita Terkini</h2>
+                <form id="newsForm" onsubmit="handleAddNews(event)">
+                    <div class="form-group">
+                        <label for="newsTitle">Judul Berita</label>
+                        <input type="text" id="newsTitle" placeholder="Masukkan judul berita..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newsMedia">Unggah Foto / Video</label>
+                        <input type="file" id="newsMedia" accept="image/*,video/*" required style="padding: 6px 0;">
+                    </div>
+                    <div class="form-group">
+                        <label for="newsContent">Isi Berita</label>
+                        <textarea id="newsContent" rows="5" placeholder="Tuliskan isi berita di sini..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-login" style="margin-bottom: 10px;">Terbitkan Berita</button>
+                    <button type="button" class="btn-logout" style="width: 100%; margin-top: 0; background-color: #6c757d;" onclick="switchPage('admin')">Kembali ke Panel</button>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- HALAMAN 8: UBAH PROFIL ADMIN -->
     <div id="page-admin-profil" class="page-section">
         <main>
             <div class="login-box">
@@ -345,7 +371,7 @@
     </footer>
 
     <script>
-        // Kredensial Login Admin (Bisa Berubah Dinamis)
+        // Kredensial Login Admin
         let adminUser = 'admin123';
         let adminPass = '123456789';
 
@@ -391,7 +417,7 @@
             const sections = document.querySelectorAll('.page-section');
             sections.forEach(sec => sec.classList.remove('active-page'));
             
-            const target = document.getElementById('page-' + pageId);
+            const target = document.getElementById(pageId) || document.getElementById('page-' + pageId);
             if (target) {
                 target.classList.add('active-page');
             }
@@ -426,6 +452,15 @@
                 document.getElementById('profileForm').reset();
                 switchPage('admin');
             }
+        }
+
+        // Fungsi Mengirim Berita Baru
+        function handleAddNews(event) {
+            event.preventDefault();
+            const title = document.getElementById('newsTitle').value;
+            alert(`Berita "${title}" berhasil diterbitkan!`);
+            document.getElementById('newsForm').reset();
+            switchPage('admin');
         }
     </script>
 </body>
