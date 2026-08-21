@@ -12,21 +12,38 @@
             background-color: #f4f7f6;
             color: #333;
         }
+        /* Bagian Header / Banner dengan Slideshow Background */
         header {
-            background-color: #2E8B57; /* Hijau elegan */
+            position: relative;
+            background-size: cover;
+            background-position: center;
             color: white;
             text-align: center;
-            padding: 2rem 0;
+            padding: 5rem 1rem;
+            transition: background-image 1s ease-in-out;
         }
-        header img {
-            width: 150px; /* Ukuran lebar logo */
-            height: auto;
+        /* Lapisan transparan gelap agar teks putih tetap terbaca jelas di atas foto */
+        header .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.45);
+            z-index: 1;
+        }
+        header h1, header p {
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+        }
+        header h1 {
+            font-size: 2.5rem;
             margin-bottom: 10px;
-            border-radius: 8px;
         }
         header p {
             font-size: 1.2rem;
-            margin-top: 5px;
+            margin-top: 0;
         }
         nav {
             background-color: #1a5c38;
@@ -71,9 +88,10 @@
     </style>
 </head>
 <body>
-    <header>
-        <!-- Menggunakan format logo.jpg sesuai file Anda -->
-        <img src="logo.jpg" alt="Logo Sekolah">
+
+    <!-- Header dengan Background Berganti Otomatis -->
+    <header id="hero-header">
+        <div class="overlay"></div>
         <h1>Islamic School Al-Madinah</h1>
         <p>Membentuk Karakter, Pengetahuan, dan Prestasi Berlandaskan Iman</p>
     </header>
@@ -98,5 +116,31 @@
     <footer>
         <p>&copy; 2026 Islamic School Al-Madinah. Semua Hak Cipta Dilindungi.</p>
     </footer>
+
+    <!-- Skrip JavaScript untuk Slideshow Otomatis setiap 3 Detik -->
+    <script>
+        const images = [
+            "url('foto1.jpg')",
+            "url('foto2.jpg')",
+            "url('foto3.jpg')"
+            "url('foto4.jpg')"
+            "url('foto5.jpg')"
+            "url('foto6.jpg')"
+        ];
+        
+        let currentIndex = 0;
+        const header = document.getElementById('hero-header');
+
+        function changeBackground() {
+            currentIndex = (currentIndex + 1) % images.length;
+            header.style.backgroundImage = images[currentIndex];
+        }
+
+        // Tampilkan foto pertama saat dibuka
+        header.style.backgroundImage = images[0];
+
+        // Ganti foto setiap 3000 milidetik (3 detik)
+        setInterval(changeBackground, 3000);
+    </script>
 </body>
 </html>
