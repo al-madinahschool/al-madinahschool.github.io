@@ -338,7 +338,7 @@
             <div class="admin-grid">
                 <div class="admin-card" onclick="renderAllUsersTable(); switchPage('tambah-user-menu')">
                     <h3>👥 Tambah User</h3>
-                    <p>Unduh form excel dan kelola data pengguna baru</p>
+                    <p>Unduh form excel (.csv) dan kelola data pengguna</p>
                 </div>
                 <div class="admin-card" onclick="switchPage('berita-terkini-menu')">
                     <h3>📰 Berita Terkini</h3>
@@ -377,20 +377,20 @@
     <!-- HALAMAN 7: MENU TAMBAH USER (DOWNLOAD, UPLOAD & RINCIAN TABEL USER) -->
     <div id="tambah-user-menu" class="page-section">
         <main style="max-width: 850px; margin: 30px auto;" class="admin-dashboard">
-            <h2>Manajemen Tambah User (Excel)</h2>
-            <p>Gunakan templat Excel untuk mendaftarkan akun, atau lihat daftar rincian pengguna yang telah terdaftar di bawah ini:</p>
+            <h2>Manajemen Tambah User (Excel / CSV)</h2>
+            <p>Unduh templat format CSV, isi datanya, lalu unggah kembali untuk mendaftarkan akun secara massal:</p>
             
             <div class="admin-grid" style="margin-top: 20px;">
                 <!-- Kotak Download Form -->
                 <div class="admin-card" onclick="downloadUserTemplate()" style="border-color: #0275d8; background-color: #f0f8ff;">
                     <h3 style="color: #0275d8;">📥 Download Form</h3>
-                    <p>Unduh templat Excel (.csv) berisi kolom data user</p>
+                    <p>Unduh templat format CSV berisi kolom data user</p>
                 </div>
                 <!-- Kotak Upload Form -->
                 <div class="admin-card" onclick="document.getElementById('excelFileInput').click()" style="border-color: #5cb85c; background-color: #f0fff0;">
                     <h3 style="color: #5cb85c;">📤 Upload Form</h3>
-                    <p>Unggah file Excel yang telah diisi data pengguna</p>
-                    <input type="file" id="excelFileInput" accept=".csv, .xlsx, .xls" style="display: none;" onchange="handleUploadExcel(event)">
+                    <p>Unggah file CSV yang telah diisi data pengguna</p>
+                    <input type="file" id="excelFileInput" accept=".csv" style="display: none;" onchange="handleUploadExcel(event)">
                 </div>
             </div>
 
@@ -553,7 +553,6 @@
             const userInput = document.getElementById('username').value.trim();
             const passInput = document.getElementById('password').value.trim();
 
-            // Cek kecocokan dengan data terbaru di usersList
             let validUser = usersList.find(u => u.username === userInput && u.password === passInput);
 
             if (validUser) {
@@ -574,7 +573,6 @@
             if (newU && newP) {
                 adminUser = newU;
                 adminPass = newP;
-                // Perbarui juga data di baris admin utama
                 usersList[0].username = newU;
                 usersList[0].password = newP;
                 alert('Profil berhasil diperbarui!');
@@ -603,6 +601,14 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 const text = e.target.result;
+                
+                // Cek pengaman jika yang diunggah file excel .xlsx mentah
+                if (text.includes('PK') || text.includes('xl/')) {
+                    alert('Format file salah! Harap unggah file berformat CSV (hasil unduhan dari tombol Download Form), bukan file Excel .xlsx asli.');
+                    event.target.value = '';
+                    return;
+                }
+
                 const lines = text.split('\n');
                 let countNew = 0;
 
