@@ -167,6 +167,19 @@
             border-bottom: 2px solid #2E8B57;
             padding-bottom: 10px;
             margin-top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .admin-dashboard h2 .greeting-text {
+            font-size: 1rem;
+            font-weight: normal;
+            color: #555;
+            background: #eaf4ed;
+            padding: 4px 10px;
+            border-radius: 4px;
         }
         .admin-grid {
             display: grid;
@@ -329,14 +342,17 @@
         </div>
     </div>
 
-    <!-- HALAMAN 6: DASHBOARD ADMIN (MENU DINAMIS BERDASARKAN HAK AKSES) -->
+    <!-- HALAMAN 6: DASHBOARD ADMIN (DENGAN UCAPAN SELAMAT WAKTU & NAMA USER) -->
     <div id="page-admin" class="page-section">
         <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
-            <h2>Panel Manajemen Sekolah</h2>
-            <p>Selamat datang, <strong id="welcome-user-name">Admin</strong> (<span id="welcome-user-jabatan">Administrator</span>). Menu di bawah ini disesuaikan dengan hak akses akun Anda:</p>
+            <h2>
+                <span>Panel Admin Sekolah</span>
+                <span id="user-greeting" class="greeting-text">Selamat Malam, Pengguna</span>
+            </h2>
+            <p>Pilih menu manajemen di bawah ini sesuai dengan hak akses akun Anda:</p>
             
             <div class="admin-grid" id="admin-cards-grid">
-                <!-- Menu akan dimuat secara dinamis oleh JavaScript sesuai hak akses user -->
+                <!-- Menu akan dimuat secara dinamis oleh JavaScript -->
             </div>
 
             <button class="btn-logout" onclick="switchPage('home')">Keluar (Logout)</button>
@@ -485,7 +501,7 @@
             }
         ];
 
-        let loggedInUser = null; // Menyimpan user yang sedang login
+        let loggedInUser = null; 
         let editingUserIndex = null;
 
         // Daftar konfigurasi menu admin dan izinnya
@@ -538,7 +554,6 @@
 
         // Fungsi Tombol Navigasi Antar Menu Tanpa Reload Halaman dengan Validasi Hak Akses
         function switchPage(pageId) {
-            // Validasi Hak Akses sebelum membuka halaman tertentu
             if (loggedInUser && loggedInUser.username !== 'admin123') {
                 if (pageId === 'tambah-user-menu' && (!loggedInUser.hak_akses || !loggedInUser.hak_akses.includes('Tambah User'))) {
                     alert('Akses Ditolak! Anda tidak memiliki izin untuk membuka menu Tambah User.');
@@ -563,6 +578,22 @@
             window.scrollTo(0, 0); 
         }
 
+        // Fungsi Menghasilkan Ucapan Berdasarkan Waktu & Nama User
+        function getGreeting(userName) {
+            const hour = new Date().getHours();
+            let waktu = "Malam";
+            if (hour >= 4 && hour < 11) {
+                waktu = "Pagi";
+            } else if (hour >= 11 && hour < 15) {
+                waktu = "Siang";
+            } else if (hour >= 15 && hour < 18) {
+                waktu = "Sore";
+            } else {
+                waktu = "Malam";
+            }
+            return `Selamat ${waktu}, ${userName}`;
+        }
+
         // Fungsi Validasi Login & Menampilkan Dashboard Sesuai Hak Akses
         function handleLogin(event) {
             event.preventDefault();
@@ -572,11 +603,15 @@
             let validUser = usersList.find(u => u.username === userInput && u.password === passInput);
 
             if (validUser) {
-                loggedInUser = validUser; // Simpan sesi user yang sedang login
-                document.getElementById('welcome-user-name').innerText = validUser.nama;
-                document.getElementById('welcome-user-jabatan').innerText = validUser.jabatan;
+                loggedInUser = validUser; 
+                
+                // Set ucapan selamat di sebelah kanan judul Panel Admin
+                const greetingEl = document.getElementById('user-greeting');
+                if (greetingEl) {
+                    greetingEl.innerText = getGreeting(validUser.nama);
+                }
 
-                renderAdminDashboard(); // Buat kartu menu dinamis sesuai izin user
+                renderAdminDashboard(); 
 
                 alert(`Login Berhasil! Selamat datang ${validUser.nama} (${validUser.jabatan}).`);
                 document.getElementById('loginForm').reset();
@@ -600,7 +635,6 @@
                     }
                 }
 
-                // Tampilkan hanya kartu menu yang diizinkan
                 if (hasAccess) {
                     html += `
                         <div class="admin-card" onclick="${menu.action}">
@@ -611,7 +645,6 @@
                 }
             });
 
-            // Kartu Profil Akun selalu tersedia untuk semua user
             html += `
                 <div class="admin-card" onclick="switchPage('admin-profil')" style="border-color: #2E8B57; background-color: #eaf4ed;">
                     <h3>⚙️ Profil Akun</h3>
