@@ -76,20 +76,45 @@
             text-decoration: underline;
             color: #ffcc00;
         }
+        /* Layout Grid Beranda (Kiri: Pengumuman/Visi Misi, Kanan: Berita Terkini) */
+        .home-content-grid {
+            max-width: 900px;
+            margin: 30px auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            padding: 0 20px;
+        }
         main {
             padding: 30px;
-            max-width: 800px;
-            margin: 30px auto;
             background-color: white;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             border-radius: 8px;
             line-height: 1.6;
+            margin: 0;
+        }
+        .news-sidebar {
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            height: fit-content;
+        }
+        .news-sidebar h3 {
+            color: #2E8B57;
+            border-bottom: 2px solid #2E8B57;
+            padding-bottom: 8px;
+            margin-top: 0;
+            font-size: 1.1rem;
         }
         /* Style untuk Menu Login & Form */
         .login-box {
             max-width: 500px;
-            margin: 0 auto;
-            padding: 10px;
+            margin: 30px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
         }
         .login-box h2 {
             text-align: center;
@@ -222,18 +247,27 @@
             <img src="foto3.jpg" class="slide" alt="Galeri Sekolah 3">
         </div>
         
-        <main>
-            <h2>Pengumuman Terbaru</h2>
-            <p>Selamat datang di portal resmi <strong>Islamic School Al-Madinah</strong>. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</p>
-            
-            <h2>Visi & Misi</h2>
-            <p>Menjadi institusi pendidikan yang mencetak generasi unggul, berakhlak mulia, dan siap menghadapi tantangan global dengan pondasi agama yang kuat.</p>
-        </main>
+        <div class="home-content-grid">
+            <main>
+                <h2>Pengumuman Terbaru</h2>
+                <p>Selamat datang di portal resmi <strong>Islamic School Al-Madinah</strong>. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</p>
+                
+                <h2>Visi & Misi</h2>
+                <p>Menjadi institusi pendidikan yang mencetak generasi unggul, berakhlak mulia, dan siap menghadapi tantangan global dengan pondasi agama yang kuat.</p>
+            </main>
+
+            <aside class="news-sidebar">
+                <h3>📰 Berita Terkini</h3>
+                <div id="dynamic-news-container">
+                    <p style="color: #666; font-style: italic; font-size: 0.9rem;">Belum ada berita yang diterbitkan.</p>
+                </div>
+            </aside>
+        </div>
     </div>
 
     <!-- HALAMAN 2: PROFIL SEKOLAH -->
     <div id="page-profil" class="page-section">
-        <main>
+        <main style="max-width: 800px; margin: 30px auto;">
             <h2>Profil Sekolah</h2>
             <p>Halaman ini berisi informasi lengkap mengenai sejarah berdirinya Sekolah Dasar Islam Al-Madinah, fasilitas belajar, serta daftar tenaga pengajar profesional.</p>
         </main>
@@ -241,7 +275,7 @@
 
     <!-- HALAMAN 3: INFORMASI AKADEMIK -->
     <div id="page-akademik" class="page-section">
-        <main>
+        <main style="max-width: 800px; margin: 30px auto;">
             <h2>Informasi Akademik</h2>
             <p>Menyajikan jadwal kegiatan belajar mengajar, kalender pendidikan tahun ajaran ini, serta informasi seputar ekstrakurikuler.</p>
         </main>
@@ -249,7 +283,7 @@
 
     <!-- HALAMAN 4: KONTAK -->
     <div id="page-kontak" class="page-section">
-        <main>
+        <main style="max-width: 800px; margin: 30px auto;">
             <h2>Kontak Kami</h2>
             <p>Silakan hubungi kami melalui alamat kantor sekolah atau melalui layanan pesan resmi untuk informasi seputar pendaftaran dan administrasi.</p>
         </main>
@@ -257,27 +291,25 @@
 
     <!-- HALAMAN 5: LOGIN / MASUK -->
     <div id="page-login" class="page-section">
-        <main>
-            <div class="login-box">
-                <h2>Portal Masuk Admin</h2>
-                <form id="loginForm" onsubmit="handleLogin(event)">
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" id="username" placeholder="Masukkan username..." required>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Kata Sandi</label>
-                        <input type="password" id="password" placeholder="Masukkan kata sandi..." required>
-                    </div>
-                    <button type="submit" class="btn-login">Masuk ke Sistem</button>
-                </form>
-            </div>
-        </main>
+        <div class="login-box">
+            <h2>Portal Masuk Admin</h2>
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="Masukkan username..." required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Kata Sandi</label>
+                    <input type="password" id="password" placeholder="Masukkan kata sandi..." required>
+                </div>
+                <button type="submit" class="btn-login">Masuk ke Sistem</button>
+            </form>
+        </div>
     </div>
 
     <!-- HALAMAN 6: DASHBOARD ADMIN -->
     <div id="page-admin" class="page-section">
-        <main class="admin-dashboard">
+        <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
             <h2>Panel Admin Sekolah</h2>
             <p>Selamat datang, <strong>Admin</strong>. Pilih menu manajemen di bawah ini untuk mengelola data *website* sekolah:</p>
             
@@ -286,9 +318,9 @@
                     <h3>👥 Tambah User</h3>
                     <p>Kelola akun dan hak akses pengguna sistem</p>
                 </div>
-                <div class="admin-card" onclick="switchPage('tambah-berita')">
-                    <h3>📰 Tambah Berita</h3>
-                    <p>Buat dan terbitkan pengumuman serta berita sekolah</p>
+                <div class="admin-card" onclick="switchPage('berita-terkini-menu')">
+                    <h3>📰 Berita Terkini</h3>
+                    <p>Kelola tambah berita dan lihat berita terbit</p>
                 </div>
                 <div class="admin-card" onclick="alert('Membuka formulir: Menambahkan Data Siswa')">
                     <h3>🎓 Data Siswa</h3>
@@ -320,50 +352,81 @@
         </main>
     </div>
 
-    <!-- HALAMAN 7: TAMBAH BERITA TERKINI -->
-    <div id="tambah-berita" class="page-section">
-        <main>
-            <div class="login-box">
-                <h2>Tambah Berita Terkini</h2>
-                <form id="newsForm" onsubmit="handleAddNews(event)">
-                    <div class="form-group">
-                        <label for="newsTitle">Judul Berita</label>
-                        <input type="text" id="newsTitle" placeholder="Masukkan judul berita..." required>
-                    </div>
-                    <div class="form-group">
-                        <label for="newsMedia">Unggah Foto / Video</label>
-                        <input type="file" id="newsMedia" accept="image/*,video/*" required style="padding: 6px 0;">
-                    </div>
-                    <div class="form-group">
-                        <label for="newsContent">Isi Berita</label>
-                        <textarea id="newsContent" rows="5" placeholder="Tuliskan isi berita di sini..." required></textarea>
-                    </div>
-                    <button type="submit" class="btn-login" style="margin-bottom: 10px;">Terbitkan Berita</button>
-                    <button type="button" class="btn-logout" style="width: 100%; margin-top: 0; background-color: #6c757d;" onclick="switchPage('admin')">Kembali ke Panel</button>
-                </form>
+    <!-- HALAMAN 7: MENU UTAMA BERITA TERKINI (Sub-Menu) -->
+    <div id="berita-terkini-menu" class="page-section">
+        <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
+            <h2>Manajemen Berita Terkini</h2>
+            <p>Pilih salah satu menu manajemen berita di bawah ini:</p>
+            
+            <div class="admin-grid">
+                <div class="admin-card" onclick="switchPage('tambah-berita')">
+                    <h3>➕ Tambah Berita</h3>
+                    <p>Buat dan terbitkan berita atau pengumuman baru</p>
+                </div>
+                <div class="admin-card" onclick="renderNewsManagement(); switchPage('berita-list')">
+                    <h3>📋 Berita Diterbitkan</h3>
+                    <p>Lihat, kelola, atau hapus berita yang sudah tayang</p>
+                </div>
             </div>
+
+            <button class="btn-logout" style="background-color: #6c757d;" onclick="switchPage('admin')">Kembali ke Panel Utama</button>
         </main>
     </div>
 
-    <!-- HALAMAN 8: UBAH PROFIL ADMIN -->
-    <div id="page-admin-profil" class="page-section">
-        <main>
-            <div class="login-box">
-                <h2>Ubah Profil Admin</h2>
-                <form id="profileForm" onsubmit="handleUpdateProfile(event)">
-                    <div class="form-group">
-                        <label for="newUsername">Username Baru</label>
-                        <input type="text" id="newUsername" placeholder="Masukkan username baru..." required>
-                    </div>
-                    <div class="form-group">
-                        <label for="newPassword">Kata Sandi Baru</label>
-                        <input type="password" id="newPassword" placeholder="Masukkan kata sandi baru..." required>
-                    </div>
-                    <button type="submit" class="btn-login" style="margin-bottom: 10px;">Simpan Perubahan</button>
-                    <button type="button" class="btn-logout" style="width: 100%; margin-top: 0; background-color: #6c757d;" onclick="switchPage('admin')">Kembali ke Panel</button>
-                </form>
+    <!-- HALAMAN 8: TAMBAH BERITA -->
+    <div id="tambah-berita" class="page-section">
+        <div class="login-box">
+            <h2>Tambah Berita Baru</h2>
+            <form id="newsForm" onsubmit="handleAddNews(event)">
+                <div class="form-group">
+                    <label for="newsTitle">Judul Berita</label>
+                    <input type="text" id="newsTitle" placeholder="Masukkan judul berita..." required>
+                </div>
+                <div class="form-group">
+                    <label for="newsMedia">Unggah Foto / Video</label>
+                    <input type="file" id="newsMedia" accept="image/*,video/*" style="padding: 6px 0;">
+                </div>
+                <div class="form-group">
+                    <label for="newsContent">Isi Berita</label>
+                    <textarea id="newsContent" rows="4" placeholder="Tuliskan isi berita di sini..." required></textarea>
+                </div>
+                <button type="submit" class="btn-login" style="margin-bottom: 10px;">Terbitkan Berita</button>
+                <button type="button" class="btn-logout" style="width: 100%; margin-top: 0; background-color: #6c757d;" onclick="switchPage('berita-terkini-menu')">Kembali</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- HALAMAN 9: BERITA DITERBITKAN (Daftar & Hapus Berita) -->
+    <div id="berita-list" class="page-section">
+        <main style="max-width: 800px; margin: 30px auto;" class="admin-dashboard">
+            <h2>Daftar Berita Diterbitkan</h2>
+            <p>Berikut adalah daftar berita yang sedang tayang di *website*:</p>
+            
+            <div id="admin-news-list-container" style="margin-top: 20px;">
+                <!-- List berita akan muncul di sini secara otomatis -->
             </div>
+
+            <button class="btn-logout" style="background-color: #6c757d;" onclick="switchPage('berita-terkini-menu')">Kembali</button>
         </main>
+    </div>
+
+    <!-- HALAMAN 10: UBAH PROFIL ADMIN -->
+    <div id="page-admin-profil" class="page-section">
+        <div class="login-box">
+            <h2>Ubah Profil Admin</h2>
+            <form id="profileForm" onsubmit="handleUpdateProfile(event)">
+                <div class="form-group">
+                    <label for="newUsername">Username Baru</label>
+                    <input type="text" id="newUsername" placeholder="Masukkan username baru..." required>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Kata Sandi Baru</label>
+                    <input type="password" id="newPassword" placeholder="Masukkan kata sandi baru..." required>
+                </div>
+                <button type="submit" class="btn-login" style="margin-bottom: 10px;">Simpan Perubahan</button>
+                <button type="button" class="btn-logout" style="width: 100%; margin-top: 0; background-color: #6c757d;" onclick="switchPage('admin')">Kembali ke Panel</button>
+            </form>
+        </div>
     </div>
 
     <footer>
@@ -374,6 +437,9 @@
         // Kredensial Login Admin
         let adminUser = 'admin123';
         let adminPass = '123456789';
+
+        // Daftar Berita
+        let newsList = [];
 
         // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
         function updateDateTime() {
@@ -454,13 +520,93 @@
             }
         }
 
-        // Fungsi Mengirim Berita Baru
+        // Fungsi Menambah Berita Baru
         function handleAddNews(event) {
             event.preventDefault();
             const title = document.getElementById('newsTitle').value;
+            const content = document.getElementById('newsContent').value;
+            const fileInput = document.getElementById('newsMedia');
+
+            let mediaHtml = '';
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const fileUrl = URL.createObjectURL(file);
+                if (file.type.startsWith('video/')) {
+                    mediaHtml = `<video src="${fileUrl}" controls style="width: 100%; height: 140px; object-fit: cover; border-radius: 5px; margin-bottom: 8px;"></video>`;
+                } else {
+                    mediaHtml = `<img src="${fileUrl}" style="width: 100%; height: 140px; object-fit: cover; border-radius: 5px; margin-bottom: 8px;" alt="Media Berita">`;
+                }
+            }
+
+            const currentDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+
+            newsList.unshift({
+                title: title,
+                content: content,
+                media: mediaHtml,
+                date: currentDate
+            });
+
+            renderNewsFeed();
             alert(`Berita "${title}" berhasil diterbitkan!`);
             document.getElementById('newsForm').reset();
-            switchPage('admin');
+            switchPage('berita-terkini-menu');
+        }
+
+        // Fungsi Merender Daftar Berita di Halaman Beranda
+        function renderNewsFeed() {
+            const container = document.getElementById('dynamic-news-container');
+            if (newsList.length === 0) {
+                container.innerHTML = '<p style="color: #666; font-style: italic; font-size: 0.9rem;">Belum ada berita yang diterbitkan.</p>';
+                return;
+            }
+
+            let html = '';
+            newsList.forEach(item => {
+                html += `
+                    <div style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+                        ${item.media}
+                        <small style="color: #888;">📅 ${item.date}</small>
+                        <h4 style="margin: 5px 0 6px 0; color: #1a5c38; font-size: 1.05rem;">${item.title}</h4>
+                        <p style="font-size: 0.9rem; color: #444; margin: 0; line-height: 1.4;">${item.content}</p>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Fungsi Merender Daftar Berita di Panel Admin (Untuk Dikelola/Dihapus)
+        function renderNewsManagement() {
+            const container = document.getElementById('admin-news-list-container');
+            if (newsList.length === 0) {
+                container.innerHTML = '<p style="color: #666; font-style: italic;">Belum ada berita yang diterbitkan.</p>';
+                return;
+            }
+
+            let html = '';
+            newsList.forEach((item, index) => {
+                html += `
+                    <div style="background: #f9f9f9; border: 1px solid #ddd; padding: 15px; border-radius: 6px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="max-width: 65%;">
+                            <h4 style="margin: 0 0 5px 0; color: #2E8B57;">${item.title}</h4>
+                            <small style="color: #888;">📅 ${item.date}</small>
+                            <p style="margin: 5px 0 0 0; font-size: 0.9rem; color: #555;">${item.content.substring(0, 70)}...</p>
+                        </div>
+                        <button onclick="deleteNews(${index})" style="background-color: #d9534f; color: white; border: none; padding: 8px 14px; border-radius: 4px; font-weight: bold; cursor: pointer;">Hapus</button>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Fungsi Menghapus Berita
+        function deleteNews(index) {
+            if (confirm('Apakah Anda yakin ingin menghapus berita ini dari website?')) {
+                newsList.splice(index, 1);
+                renderNewsFeed();
+                renderNewsManagement();
+                alert('Berita berhasil dihapus!');
+            }
         }
     </script>
 </body>
