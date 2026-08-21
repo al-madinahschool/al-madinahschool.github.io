@@ -12,43 +12,45 @@
             background-color: #f4f7f6;
             color: #333;
         }
-        /* Bagian Header / Banner dengan Slideshow Background */
         header {
-            position: relative;
-            background-size: cover;
-            background-position: center;
+            background-color: #2E8B57; /* Hijau elegan */
             color: white;
             text-align: center;
-            padding: 5rem 1rem;
-            transition: background-image 1s ease-in-out;
-        }
-        /* Lapisan transparan gelap agar teks putih tetap terbaca jelas di atas foto */
-        header .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.45);
-            z-index: 1;
-        }
-        header h1, header p {
-            position: relative;
-            z-index: 2;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            padding: 2.5rem 1rem;
         }
         header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2.3rem;
+            margin-bottom: 5px;
         }
         header p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             margin-top: 0;
+        }
+        /* Kotak Galeri / Slider Foto */
+        .slider-container {
+            max-width: 850px;
+            margin: 25px auto 10px auto;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            background-color: #ddd;
+        }
+        .slider-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Membuat foto pas, jernih, dan tidak gepeng */
+            display: none; /* Sembunyikan foto yang tidak aktif */
+        }
+        .slider-container img.active {
+            display: block; /* Hanya tampilkan foto yang aktif */
         }
         nav {
             background-color: #1a5c38;
             padding: 15px;
             text-align: center;
+            margin-top: 20px;
         }
         nav ul {
             list-style-type: none;
@@ -89,13 +91,21 @@
 </head>
 <body>
 
-    <!-- Header dengan Background Berganti Otomatis -->
-    <header id="hero-header">
-        <div class="overlay"></div>
+    <header>
         <h1>Islamic School Al-Madinah</h1>
         <p>Membentuk Karakter, Pengetahuan, dan Prestasi Berlandaskan Iman</p>
     </header>
     
+    <!-- Kotak Tempat Galeri Foto Berganti Otomatis -->
+    <div class="slider-container">
+        <img src="foto1.jpg" class="slide active" alt="Galeri Sekolah 1">
+        <img src="foto2.jpg" class="slide" alt="Galeri Sekolah 2">
+        <img src="foto3.jpg" class="slide" alt="Galeri Sekolah 3">
+        <img src="foto4.jpg" class="slide" alt="Galeri Sekolah 4">
+        <img src="foto5.jpg" class="slide" alt="Galeri Sekolah 5">
+        <img src="foto6.jpg" class="slide" alt="Galeri Sekolah 6">
+    </div>
+
     <nav>
         <ul>
             <li><a href="#">Beranda</a></li>
@@ -117,30 +127,19 @@
         <p>&copy; 2026 Islamic School Al-Madinah. Semua Hak Cipta Dilindungi.</p>
     </footer>
 
-    <!-- Skrip JavaScript untuk Slideshow Otomatis setiap 3 Detik -->
+    <!-- Skrip JavaScript Slider Otomatis 3 Detik -->
     <script>
-        const images = [
-            "url('foto1.jpg')",
-            "url('foto2.jpg')",
-            "url('foto3.jpg')"
-            "url('foto4.jpg')"
-            "url('foto5.jpg')"
-            "url('foto6.jpg')"
-        ];
-        
-        let currentIndex = 0;
-        const header = document.getElementById('hero-header');
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slider-container .slide');
 
-        function changeBackground() {
-            currentIndex = (currentIndex + 1) % images.length;
-            header.style.backgroundImage = images[currentIndex];
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
         }
 
-        // Tampilkan foto pertama saat dibuka
-        header.style.backgroundImage = images[0];
-
-        // Ganti foto setiap 3000 milidetik (3 detik)
-        setInterval(changeBackground, 3000);
+        // Ganti foto otomatis setiap 3000ms (3 detik)
+        setInterval(nextSlide, 3000);
     </script>
 </body>
 </html>
