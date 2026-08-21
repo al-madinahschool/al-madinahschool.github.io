@@ -16,15 +16,21 @@
             background-color: #2E8B57; /* Hijau elegan */
             color: white;
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem 1rem 1rem;
         }
-        header h1 {
-            font-size: 2.3rem;
-            margin-bottom: 5px;
+        /* Style untuk Teks Berjalan */
+        header marquee {
+            font-size: 1.3rem;
+            font-weight: bold;
+            background-color: rgba(0, 0, 0, 0.15);
+            padding: 8px 0;
+            margin-bottom: 10px;
+            border-radius: 4px;
         }
         header p {
             font-size: 1.1rem;
-            margin-top: 0;
+            margin-top: 5px;
+            margin-bottom: 0;
         }
         /* Kotak Galeri / Slider Foto */
         .slider-container {
@@ -91,7 +97,11 @@
 <body>
 
     <header>
-        <h1>Islamic School Al-Madinah</h1>
+        <!-- Teks Berjalan / Marquee Berisi Sambutan & Waktu Dinamis -->
+        <marquee behavior="scroll" direction="left" scrollamount="5">
+            Selamat Datang Di Website Resmi Sekolah Dasar Islam Al - Madinah &nbsp;&nbsp;&bull;&nbsp;&nbsp; 
+            <span id="datetime-ticker">Memuat Tanggal dan Waktu...</span>
+        </marquee>
         <p>Membentuk Karakter, Pengetahuan, dan Prestasi Berlandaskan Iman</p>
     </header>
 
@@ -109,9 +119,6 @@
         <img src="foto1.jpg" class="slide active" alt="Galeri Sekolah 1">
         <img src="foto2.jpg" class="slide" alt="Galeri Sekolah 2">
         <img src="foto3.jpg" class="slide" alt="Galeri Sekolah 3">
-        <img src="foto4.jpg" class="slide" alt="Galeri Sekolah 4">
-        <img src="foto5.jpg" class="slide" alt="Galeri Sekolah 5">
-        <img src="foto6.jpg" class="slide" alt="Galeri Sekolah 6">
     </div>
     
     <main>
@@ -126,18 +133,49 @@
         <p>&copy; 2026 Islamic School Al-Madinah. Semua Hak Cipta Dilindungi.</p>
     </footer>
 
-    <!-- Skrip JavaScript Slider Otomatis 3 Detik -->
+    <!-- Skrip JavaScript untuk Jam, Tanggal Masehi, Hijriah, dan Slider Foto -->
     <script>
+        // 1. Fungsi untuk memperbarui Tanggal Masehi, Hijriah, dan Jam secara Real-Time
+        function updateDateTime() {
+            const now = new Date();
+            
+            // Format Masehi (Bahasa Indonesia)
+            const optionsMasehi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const masehiStr = now.toLocaleDateString('id-ID', optionsMasehi);
+            
+            // Format Hijriah (Kalender Islam UMMul Qura)
+            let hijriStr = "";
+            try {
+                const optionsHijri = { calendar: 'islamic-umalqura', day: 'numeric', month: 'long', year: 'numeric' };
+                hijriStr = new Intl.DateTimeFormat('id-ID-u-ca-islamic-umalqura', optionsHijri).format(now);
+            } catch (e) {
+                hijriStr = "Kalender Hijriah";
+            }
+            
+            // Format Jam
+            const timeStr = now.toLocaleTimeString('id-ID');
+            
+            // Gabungkan ke dalam teks berjalan
+            const fullText = `📅 Masehi: ${masehiStr} &nbsp;&nbsp;|&nbsp;&nbsp; 🌙 Hijriah: ${hijriStr} &nbsp;&nbsp;|&nbsp;&nbsp; ⏰ Pukul: ${timeStr} WIB`;
+            document.getElementById('datetime-ticker').innerHTML = fullText;
+        }
+
+        // Jalankan detik per detik
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // 2. Skrip Slider Foto Otomatis Setiap 3 Detik
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slider-container .slide');
 
         function nextSlide() {
-            slides[currentSlide].classList.remove('active');
-            currentSlide = (currentSlide + 1) % slides.length;
-            slides[currentSlide].classList.add('active');
+            if(slides.length > 0) {
+                slides[currentSlide].classList.remove('active');
+                currentSlide = (currentSlide + 1) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
         }
 
-        // Ganti foto otomatis setiap 3000ms (3 detik)
         setInterval(nextSlide, 3000);
     </script>
 </body>
