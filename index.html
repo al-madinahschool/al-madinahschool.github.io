@@ -18,7 +18,6 @@
             text-align: center;
             padding: 1.5rem 1rem 1rem 1rem;
         }
-        /* Style untuk Teks Berjalan */
         header marquee {
             font-size: 1.3rem;
             font-weight: bold;
@@ -46,11 +45,11 @@
         .slider-container img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* Agar foto pas, jernih, dan tidak gepeng */
-            display: none; /* Sembunyikan foto yang tidak aktif */
+            object-fit: cover;
+            display: none;
         }
         .slider-container img.active {
-            display: block; /* Tampilkan foto yang aktif */
+            display: block;
         }
         nav {
             background-color: #1a5c38;
@@ -64,13 +63,14 @@
         }
         nav ul li {
             display: inline;
-            margin: 0 15px;
+            margin: 0 12px;
         }
         nav ul li a {
             color: white;
             text-decoration: none;
             font-weight: bold;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
+            cursor: pointer;
         }
         nav ul li a:hover {
             text-decoration: underline;
@@ -85,6 +85,53 @@
             border-radius: 8px;
             line-height: 1.6;
         }
+        /* Style untuk Menu Login */
+        .login-box {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        .login-box h2 {
+            text-align: center;
+            color: #2E8B57;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 10px;
+            background-color: #2E8B57;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn-login:hover {
+            background-color: #1a5c38;
+        }
+        /* Pengaturan Tampilan Halaman Aktif */
+        .page-section {
+            display: none;
+        }
+        .page-section.active-page {
+            display: block;
+        }
         footer {
             text-align: center;
             padding: 15px;
@@ -97,7 +144,6 @@
 <body>
 
     <header>
-        <!-- Teks Berjalan / Marquee Berisi Sambutan & Waktu Dinamis -->
         <marquee behavior="scroll" direction="left" scrollamount="5">
             Selamat Datang Di Website Resmi Sekolah Dasar Islam Al - Madinah &nbsp;&nbsp;&bull;&nbsp;&nbsp; 
             <span id="datetime-ticker">Memuat Tanggal dan Waktu...</span>
@@ -107,43 +153,86 @@
 
     <nav>
         <ul>
-            <li><a href="#">Beranda</a></li>
-            <li><a href="#">Profil Sekolah</a></li>
-            <li><a href="#">Informasi Akademik</a></li>
-            <li><a href="#">Kontak</a></li>
+            <li><a onclick="switchPage('home')">Beranda</a></li>
+            <li><a onclick="switchPage('profil')">Profil Sekolah</a></li>
+            <li><a onclick="switchPage('akademik')">Informasi Akademik</a></li>
+            <li><a onclick="switchPage('kontak')">Kontak</a></li>
+            <li><a onclick="switchPage('login')" style="color: #ffcc00;">Masuk</a></li>
         </ul>
     </nav>
     
-    <!-- Kotak Tempat Galeri Foto Berganti Otomatis -->
-    <div class="slider-container">
-        <img src="foto1.jpg" class="slide active" alt="Galeri Sekolah 1">
-        <img src="foto2.jpg" class="slide" alt="Galeri Sekolah 2">
-        <img src="foto3.jpg" class="slide" alt="Galeri Sekolah 3">
-    </div>
-    
-    <main>
-        <h2>Pengumuman Terbaru</h2>
-        <p>Selamat datang di portal resmi <strong>Islamic School Al-Madinah</strong>. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</p>
+    <!-- HALAMAN 1: BERANDA -->
+    <div id="page-home" class="page-section active-page">
+        <div class="slider-container">
+            <img src="foto1.jpg" class="slide active" alt="Galeri Sekolah 1">
+            <img src="foto2.jpg" class="slide" alt="Galeri Sekolah 2">
+            <img src="foto3.jpg" class="slide" alt="Galeri Sekolah 3">
+        </div>
         
-        <h2>Visi & Misi</h2>
-        <p>Menjadi institusi pendidikan yang mencetak generasi unggul, berakhlak mulia, dan siap menghadapi tantangan global dengan pondasi agama yang kuat.</p>
-    </main>
+        <main>
+            <h2>Pengumuman Terbaru</h2>
+            <p>Selamat datang di portal resmi <strong>Islamic School Al-Madinah</strong>. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</p>
+            
+            <h2>Visi & Misi</h2>
+            <p>Menjadi institusi pendidikan yang mencetak generasi unggul, berakhlak mulia, dan siap menghadapi tantangan global dengan pondasi agama yang kuat.</p>
+        </main>
+    </div>
+
+    <!-- HALAMAN 2: PROFIL SEKOLAH -->
+    <div id="page-profil" class="page-section">
+        <main>
+            <h2>Profil Sekolah</h2>
+            <p>Halaman ini berisi informasi lengkap mengenai sejarah berdirinya Sekolah Dasar Islam Al-Madinah, fasilitas belajar, serta daftar tenaga pengajar profesional.</p>
+        </main>
+    </div>
+
+    <!-- HALAMAN 3: INFORMASI AKADEMIK -->
+    <div id="page-akademik" class="page-section">
+        <main>
+            <h2>Informasi Akademik</h2>
+            <p>Menyajikan jadwal kegiatan belajar mengajar, kalender pendidikan tahun ajaran ini, serta informasi seputar ekstrakurikuler.</p>
+        </main>
+    </div>
+
+    <!-- HALAMAN 4: KONTAK -->
+    <div id="page-kontak" class="page-section">
+        <main>
+            <h2>Kontak Kami</h2>
+            <p>Silakan hubungi kami melalui alamat kantor sekolah atau melalui layanan pesan resmi untuk informasi seputar pendaftaran dan administrasi.</p>
+        </main>
+    </div>
+
+    <!-- HALAMAN 5: LOGIN / MASUK -->
+    <div id="page-login" class="page-section">
+        <main>
+            <div class="login-box">
+                <h2>Portal Masuk Pengguna</h2>
+                <form onsubmit="event.preventDefault(); alert('Fitur login berhasil diuji!');">
+                    <div class="form-group">
+                        <label for="username">NISN / Username / Email</label>
+                        <input type="text" id="username" placeholder="Masukkan ID pengguna..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Kata Sandi</label>
+                        <input type="password" id="password" placeholder="Masukkan kata sandi..." required>
+                    </div>
+                    <button type="submit" class="btn-login">Masuk ke Sistem</button>
+                </form>
+            </div>
+        </main>
+    </div>
 
     <footer>
         <p>&copy; 2026 Islamic School Al-Madinah. Semua Hak Cipta Dilindungi.</p>
     </footer>
 
-    <!-- Skrip JavaScript untuk Jam, Tanggal Masehi, Hijriah, dan Slider Foto -->
     <script>
-        // 1. Fungsi untuk memperbarui Tanggal Masehi, Hijriah, dan Jam secara Real-Time
+        // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
         function updateDateTime() {
             const now = new Date();
-            
-            // Format Masehi (Bahasa Indonesia)
             const optionsMasehi = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const masehiStr = now.toLocaleDateString('id-ID', optionsMasehi);
             
-            // Format Hijriah (Kalender Islam UMMul Qura)
             let hijriStr = "";
             try {
                 const optionsHijri = { calendar: 'islamic-umalqura', day: 'numeric', month: 'long', year: 'numeric' };
@@ -152,19 +241,16 @@
                 hijriStr = "Kalender Hijriah";
             }
             
-            // Format Jam
             const timeStr = now.toLocaleTimeString('id-ID');
-            
-            // Gabungkan ke dalam teks berjalan
             const fullText = `📅 Masehi: ${masehiStr} &nbsp;&nbsp;|&nbsp;&nbsp; 🌙 Hijriah: ${hijriStr} &nbsp;&nbsp;|&nbsp;&nbsp; ⏰ Pukul: ${timeStr} WIB`;
-            document.getElementById('datetime-ticker').innerHTML = fullText;
+            const ticker = document.getElementById('datetime-ticker');
+            if (ticker) ticker.innerHTML = fullText;
         }
 
-        // Jalankan detik per detik
         setInterval(updateDateTime, 1000);
         updateDateTime();
 
-        // 2. Skrip Slider Foto Otomatis Setiap 3 Detik
+        // Slider Foto Berganti Otomatis
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slider-container .slide');
 
@@ -177,6 +263,18 @@
         }
 
         setInterval(nextSlide, 3000);
+
+        // Fungsi Tombol Navigasi Antar Menu Tanpa Reload Halaman
+        function switchPage(pageId) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(sec => sec.classList.remove('active-page'));
+            
+            const target = document.getElementById('page-' + pageId);
+            if (target) {
+                target.classList.add('active-page');
+            }
+            window.scrollTo(0, 0); // Otomatis menggulir ke atas saat menu diklik
+        }
     </script>
 </body>
 </html>
