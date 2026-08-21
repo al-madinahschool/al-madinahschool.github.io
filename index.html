@@ -307,7 +307,7 @@
     <div id="page-kontak" class="page-section">
         <main style="max-width: 800px; margin: 30px auto;">
             <h2>Kontak Kami</h2>
-            <p>Silakan hubungi kami melalui alamat kantor sekolah atau melalui layanan pesan resmi untuk informasi seputar pendaftaran dan administrasi.</p>
+            <p>Silخاب hubungi kami melalui alamat kantor sekolah atau melalui layanan pesan resmi untuk informasi seputar pendaftaran dan administrasi.</p>
         </main>
     </div>
 
@@ -338,7 +338,7 @@
             <div class="admin-grid">
                 <div class="admin-card" onclick="renderAllUsersTable(); switchPage('tambah-user-menu')">
                     <h3>👥 Tambah User</h3>
-                    <p>Tambah user baru, atur hak akses, dan kelola data</p>
+                    <p>Download/Upload form excel & atur hak akses user</p>
                 </div>
                 <div class="admin-card" onclick="switchPage('berita-terkini-menu')">
                     <h3>📰 Berita Terkini</h3>
@@ -374,57 +374,46 @@
         </main>
     </div>
 
-    <!-- HALAMAN 7: MENU TAMBAH USER (FORM INPUT & TABEL RINCIAN DENGAN CENTANG AKSES) -->
+    <!-- HALAMAN 7: MENU TAMBAH USER (DOWNLOAD, UPLOAD, TABEL & EDIT HAK AKSES) -->
     <div id="tambah-user-menu" class="page-section">
         <main style="max-width: 900px; margin: 30px auto;" class="admin-dashboard">
-            <h2>Manajemen Tambah User & Hak Akses</h2>
-            <p>Tambah pengguna baru dengan mencentang menu yang diizinkan:</p>
+            <h2>Manajemen Tambah User (Excel / CSV)</h2>
+            <p>Unduh templat atau unggah data user baru ke sistem:</p>
             
-            <!-- Form Tambah User Manual dengan Checkbox Hak Akses -->
-            <div style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-top: 20px;">
-                <h3 style="color: #2E8B57; margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 8px;">➕ Form Tambah User Baru</h3>
-                <form id="addUserForm" onsubmit="handleManualAddUser(event)">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div class="form-group">
-                            <label for="newUsr">Username</label>
-                            <input type="text" id="newUsr" placeholder="Contoh: guru_budi" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newPwd">Kata Sandi</label>
-                            <input type="password" id="newPwd" placeholder="Password akun" required>
-                        </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                        <div class="form-group">
-                            <label for="newNama">Nama Pengguna</label>
-                            <input type="text" id="newNama" placeholder="Nama lengkap..." required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newJabatan">Jabatan</label>
-                            <input type="text" id="newJabatan" placeholder="Contoh: Guru Kelas" required>
-                        </div>
-                    </div>
+            <div class="admin-grid" style="margin-top: 20px;">
+                <!-- Kotak Download Form -->
+                <div class="admin-card" onclick="downloadUserTemplate()" style="border-color: #0275d8; background-color: #f0f8ff;">
+                    <h3 style="color: #0275d8;">📥 Download Form</h3>
+                    <p>Unduh templat format CSV data pengguna</p>
+                </div>
+                <!-- Kotak Upload Form -->
+                <div class="admin-card" onclick="document.getElementById('excelFileInput').click()" style="border-color: #5cb85c; background-color: #f0fff0;">
+                    <h3 style="color: #5cb85c;">📤 Upload Form</h3>
+                    <p>Unggah file CSV yang telah diisi data pengguna</p>
+                    <input type="file" id="excelFileInput" accept=".csv" style="display: none;" onchange="handleUploadExcel(event)">
+                </div>
+            </div>
 
-                    <div class="form-group" style="margin-top: 10px;">
-                        <label style="margin-bottom: 8px; display: block;">Pilih Hak Akses Menu (Centang yang diizinkan):</label>
-                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; background: #f9f9f9; padding: 12px; border-radius: 5px; border: 1px solid #ddd;">
-                            <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="accessMenu" value="Tambah User"> Tambah User</label>
-                            <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="accessMenu" value="Berita Terkini"> Berita Terkini</label>
-                            <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="accessMenu" value="Data Siswa"> Data Siswa</label>
-                            <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="accessMenu" value="Data Guru"> Data Guru</label>
-                            <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="accessMenu" value="Absen Siswa"> Absen Siswa</label>
-                            <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="accessMenu" value="Penjemputan Siswa"> Penjemputan Siswa</label>
-                            <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="accessMenu" value="Absen Karyawan"> Absen Karyawan</label>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-login" style="margin-top: 10px;">Simpan User Baru</button>
-                </form>
+            <!-- Form Edit Hak Akses (Tersembunyi sampai tombol "Atur Hak Akses" diklik) -->
+            <div id="edit-access-box" style="display: none; background: #fff; border: 2px solid #2E8B57; padding: 20px; border-radius: 8px; margin-top: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+                <h3 id="edit-access-title" style="color: #2E8B57; margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 8px;">Pengaturan Hak Akses User</h3>
+                <p style="font-size: 0.9rem; color: #555;">Centang menu yang diizinkan untuk user ini, lalu klik Simpan:</p>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; background: #f9f9f9; padding: 12px; border-radius: 5px; border: 1px solid #ddd; margin-bottom: 15px;">
+                    <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Tambah User"> Tambah User</label>
+                    <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Berita Terkini"> Berita Terkini</label>
+                    <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Data Siswa"> Data Siswa</label>
+                    <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Data Guru"> Data Guru</label>
+                    <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Absen Siswa"> Absen Siswa</label>
+                    <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Penjemputan Siswa"> Penjemputan Siswa</label>
+                    <label style="font-weight: normal; cursor: pointer;"><input type="checkbox" name="editMenu" value="Absen Karyawan"> Absen Karyawan</label>
+                </div>
+                <button onclick="saveUserAccess()" class="btn-login" style="width: auto; padding: 8px 20px; display: inline-block;">Simpan Perubahan</button>
+                <button onclick="cancelEditAccess()" class="btn-logout" style="width: auto; padding: 8px 15px; display: inline-block; margin-left: 10px; background-color: #6c757d; margin-top: 0;">Batal</button>
             </div>
 
             <!-- Tabel Rincian Semua User Terdaftar -->
             <div style="margin-top: 35px;">
-                <h3 style="color: #2E8B57; border-bottom: 2px solid #2E8B57; padding-bottom: 8px;">📋 Rincian Semua User Terdaftar & Hak Akses</h3>
+                <h3 style="color: #2E8B57; border-bottom: 2px solid #2E8B57; padding-bottom: 8px;">📋 Rincian Semua User Terdaftar</h3>
                 <div id="all-users-table-container" style="margin-top: 15px; overflow-x: auto;">
                     <!-- Tabel akan dimuat otomatis oleh JavaScript -->
                 </div>
@@ -518,16 +507,18 @@
         let adminPass = '123456789';
         let newsList = [];
         
-        // Daftar Master User (Default berisi Admin Utama dengan Akses Penuh)
+        // Daftar Master User (Default Admin Utama)
         let usersList = [
             { 
                 username: 'admin123', 
                 password: '123456789', 
                 nama: 'Admin Sekolah', 
                 jabatan: 'Administrator', 
-                hak_akses: ['Semua Menu (Full Akses)'] 
+                hak_akses: ['Tambah User', 'Berita Terkini', 'Data Siswa', 'Data Guru', 'Absen Siswa', 'Penjemputan Siswa', 'Absen Karyawan'] 
             }
         ];
+
+        let editingUserIndex = null; // Menyimpan index user yang sedang diatur hak aksesnya
 
         // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
         function updateDateTime() {
@@ -615,37 +606,69 @@
             }
         }
 
-        // --- FITUR TAMBAH USER MANUAL DENGAN CENTANG HAK AKSES ---
-        function handleManualAddUser(event) {
-            event.preventDefault();
-            const usr = document.getElementById('newUsr').value.trim();
-            const pwd = document.getElementById('newPwd').value.trim();
-            const nama = document.getElementById('newNama').value.trim();
-            const jabatan = document.getElementById('newJabatan').value.trim();
+        // --- FITUR DOWNLOAD, UPLOAD, DAN TABEL USER ---
+        function downloadUserTemplate() {
+            const csvContent = "username,password,nama_pengguna,jabatan,hak_akses\nguru01,rahasia123,Siti Aminah,Guru Kelas 1,Tambah User;Berita Terkini\nsiswa01,123456,Budi Santoso,Siswa,Absen Siswa\n";
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'templat_tambah_user.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
 
-            // Ambil semua checkbox menu yang dicentang
-            const checkboxes = document.querySelectorAll('input[name="accessMenu"]:checked');
-            let selectedMenus = [];
-            checkboxes.forEach(cb => {
-                selectedMenus.push(cb.value);
-            });
+        function handleUploadExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-            if (selectedMenus.length === 0) {
-                alert('Harap pilih minimal 1 hak akses menu untuk user ini!');
-                return;
-            }
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                
+                if (text.includes('PK') || text.includes('xl/')) {
+                    alert('Format file salah! Harap unggah file berformat CSV (hasil unduhan dari tombol Download Form).');
+                    event.target.value = '';
+                    return;
+                }
 
-            usersList.push({
-                username: usr,
-                password: pwd,
-                nama: nama,
-                jabatan: jabatan,
-                hak_akses: selectedMenus
-            });
+                const lines = text.split('\n');
+                let countNew = 0;
 
-            renderAllUsersTable();
-            alert(`User baru "${nama}" berhasil ditambahkan!`);
-            document.getElementById('addUserForm').reset();
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line) {
+                        const cols = line.split(',');
+                        if (cols.length >= 5) {
+                            let rawAccess = cols[4].trim().replace(/^"|"$/g, '');
+                            let accessArray = rawAccess ? rawAccess.split(';') : [];
+                            usersList.push({
+                                username: cols[0].trim(),
+                                password: cols[1].trim(),
+                                nama: cols[2].trim(),
+                                jabatan: cols[3].trim(),
+                                hak_akses: accessArray
+                            });
+                            countNew++;
+                        } else if (cols.length >= 4) {
+                            usersList.push({
+                                username: cols[0].trim(),
+                                password: cols[1].trim(),
+                                nama: cols[2].trim(),
+                                jabatan: cols[3].trim(),
+                                hak_akses: []
+                            });
+                            countNew++;
+                        }
+                    }
+                }
+
+                renderAllUsersTable();
+                alert(`Berhasil mengunggah dan menambahkan ${countNew} data pengguna baru!`);
+                event.target.value = ''; 
+            };
+            reader.readAsText(file);
         }
 
         function renderAllUsersTable() {
@@ -659,7 +682,9 @@
             html += '<tr style="background-color: #2E8B57; color: white;"><th style="padding: 10px; border: 1px solid #ddd;">No</th><th style="padding: 10px; border: 1px solid #ddd;">Username</th><th style="padding: 10px; border: 1px solid #ddd;">Nama Pengguna</th><th style="padding: 10px; border: 1px solid #ddd;">Jabatan</th><th style="padding: 10px; border: 1px solid #ddd;">Hak Akses Diizinkan</th><th style="padding: 10px; border: 1px solid #ddd; text-align: center;">Aksi</th></tr>';
             
             usersList.forEach((u, index) => {
-                let badgeList = u.hak_akses.map(menu => `<span style="background: #e2f0d9; color: #274e13; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem; display: inline-block; margin: 2px;">✔ ${menu}</span>`).join(' ');
+                let badgeList = (u.hak_akses && u.hak_akses.length > 0) 
+                    ? u.hak_akses.map(menu => `<span style="background: #e2f0d9; color: #274e13; padding: 2px 6px; border-radius: 3px; font-size: 0.8rem; display: inline-block; margin: 2px;">✔ ${menu}</span>`).join(' ')
+                    : '<span style="color: #888; font-style: italic; font-size: 0.85rem;">Tidak ada akses</span>';
                 
                 html += `<tr>
                     <td style="padding: 9px; border: 1px solid #ddd; text-align: center;">${index + 1}</td>
@@ -667,13 +692,55 @@
                     <td style="padding: 9px; border: 1px solid #ddd;">${u.nama}</td>
                     <td style="padding: 9px; border: 1px solid #ddd;">${u.jabatan}</td>
                     <td style="padding: 9px; border: 1px solid #ddd;">${badgeList}</td>
-                    <td style="padding: 9px; border: 1px solid #ddd; text-align: center;">
-                        ${index !== 0 ? `<button onclick="deleteUser(${index})" style="background-color: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Hapus</button>` : '<span style="color:#888; font-size:0.85rem;">Utama</span>'}
+                    <td style="padding: 9px; border: 1px solid #ddd; text-align: center; white-space: nowrap;">
+                        <button onclick="openEditAccess(${index})" style="background-color: #0275d8; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85rem; margin-right: 5px;">Hak Akses</button>
+                        ${index !== 0 ? `<button onclick="deleteUser(${index})" style="background-color: #d9534f; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.85rem;">Hapus</button>` : ''}
                     </td>
                 </tr>`;
             });
             html += '</table>';
             container.innerHTML = html;
+        }
+
+        // Fungsi Membuka Form Pengaturan Hak Akses Berdasarkan User yang Dipilih
+        function openEditAccess(index) {
+            editingUserIndex = index;
+            const user = usersList[index];
+            document.getElementById('edit-access-title').innerText = `Atur Hak Akses untuk: ${user.nama} (${user.username})`;
+            
+            // Tandai checkbox sesuai hak akses yang sudah dimiliki user tersebut
+            const checkboxes = document.querySelectorAll('input[name="editMenu"]');
+            checkboxes.forEach(cb => {
+                if (user.hak_akses && user.hak_akses.includes(cb.value)) {
+                    cb.checked = true;
+                } else {
+                    cb.checked = false;
+                }
+            });
+
+            document.getElementById('edit-access-box').style.display = 'block';
+            window.scrollTo({ top: document.getElementById('edit-access-box').offsetTop - 50, behavior: 'smooth' });
+        }
+
+        // Fungsi Menyimpan Perubahan Hak Akses
+        function saveUserAccess() {
+            if (editingUserIndex === null) return;
+
+            const checkboxes = document.querySelectorAll('input[name="editMenu"]:checked');
+            let selectedMenus = [];
+            checkboxes.forEach(cb => {
+                selectedMenus.push(cb.value);
+            });
+
+            usersList[editingUserIndex].hak_akses = selectedMenus;
+            renderAllUsersTable();
+            alert('Hak akses berhasil diperbarui!');
+            cancelEditAccess();
+        }
+
+        function cancelEditAccess() {
+            editingUserIndex = null;
+            document.getElementById('edit-access-box').style.display = 'none';
         }
 
         function deleteUser(index) {
