@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Islamic School Al-Madinah</title>
+    
+    <!-- Firebase SDK (Compat Version untuk kemudahan integrasi vanilla JS) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -259,7 +264,6 @@
             <li><a onclick="switchPage('akademik')">Informasi Akademik</a></li>
             <li><a onclick="switchPage('kontak')">Kontak</a></li>
             <li><a onclick="switchPage('login')" style="color: #ffcc00;">Masuk</a></li>
-            <!-- Tambahan Teks & Hitung Mundur Milad ke-3 di Sebelah Kanan Menu Masuk -->
             <li style="display: inline-block; margin-left: 15px; color: white; font-size: 0.9rem;">
                 🎉 <strong>Acara Puncak Milad ke 3 Islamic School Al-Madinah</strong>: <span id="countdown-timer" style="color: #ffcc00; font-weight: bold;">Memuat...</span>
             </li>
@@ -278,7 +282,7 @@
             <div class="home-content-grid">
                 <main>
                     <h2>Pengumuman Terbaru</h2>
-                    <p id="home-announcement-text">Selamat datang di portal resmi <strong>Islamic School Al-Madinah</strong>. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</p>
+                    <p id="home-announcement-text">Memuat pengumuman dari Cloud...</p>
                     
                     <h2>Visi & Misi</h2>
                     <p>Menjadi institusi pendidikan yang mencetak generasi unggul, berakhlak mulia, dan siap menghadapi tantangan global dengan pondasi agama yang kuat.</p>
@@ -287,7 +291,7 @@
                 <aside class="news-sidebar">
                     <h3>📰 Berita Terkini</h3>
                     <div id="dynamic-news-container">
-                        <p style="color: #666; font-style: italic; font-size: 0.9rem;">Belum ada berita yang diterbitkan.</p>
+                        <p style="color: #666; font-style: italic; font-size: 0.9rem;">Memuat berita...</p>
                     </div>
                 </aside>
             </div>
@@ -371,7 +375,7 @@
             <form id="announcementForm" onsubmit="handleUpdateAnnouncement(event)">
                 <div class="form-group">
                     <label for="announcementText">Isi Pengumuman Beranda</label>
-                    <textarea id="announcementText" rows="6" placeholder="Tuliskan pengumuman terbaru di sini..." required>Selamat datang di portal resmi Islamic School Al-Madinah. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.</textarea>
+                    <textarea id="announcementText" rows="6" placeholder="Tuliskan pengumuman terbaru di sini..." required></textarea>
                 </div>
                 <button type="submit" class="btn-login" style="margin-bottom: 10px;">Simpan & Terbitkan Pengumuman</button>
                 <button type="button" class="btn-logout" style="width: 100%; margin-top: 0; background-color: #6c757d;" onclick="switchPage('admin')">Kembali ke Panel Utama</button>
@@ -379,7 +383,7 @@
         </div>
     </div>
 
-    <!-- HALAMAN 7: MENU TAMBAH USER (DOWNLOAD, UPLOAD, TABEL & EDIT HAK AKSES) -->
+    <!-- HALAMAN 7: MENU TAMBAH USER -->
     <div id="tambah-user-menu" class="page-section">
         <main style="max-width: 950px; margin: 30px auto;" class="admin-dashboard">
             <h2>Manajemen Tambah User (Excel / CSV)</h2>
@@ -509,19 +513,21 @@
     </footer>
 
     <script>
-        let newsList = [];
-        
-        // Daftar Master User (Default Admin Utama dengan Akses Penuh)
-        let usersList = [
-            { 
-                username: 'admin123', 
-                password: '123456789', 
-                nama: 'Admin Sekolah', 
-                jabatan: 'Administrator', 
-                hak_akses: ['Pengumuman Terbaru', 'Tambah User', 'Berita Terkini', 'Data Siswa', 'Data Guru', 'Absen Siswa', 'Penjemputan Siswa', 'Absen Karyawan'] 
-            }
-        ];
+        // Inisialisasi Firebase menggunakan konfigurasi Anda
+        const firebaseConfig = {
+            apiKey: "AIzaSyB32KRJeQzpVHfMbsS-hsthUOADVbja1WM",
+            authDomain: "al-madinahislamicschool.firebaseapp.com",
+            projectId: "al-madinahislamicschool",
+            storageBucket: "al-madinahislamicschool.firebasestorage.app",
+            messagingSenderId: "243275208095",
+            appId: "1:243275208095:web:3da73b515cf38363db59aa"
+        };
 
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let newsList = [];
+        let usersList = [];
         let loggedInUser = null; 
         let editingUserIndex = null;
 
@@ -536,6 +542,63 @@
             { title: "🚗 Penjemputan Siswa", desc: "Kelola status dan log penjemputan anak sekolah", permission: "Penjemputan Siswa", action: "alert('Membuka menu: Penjemputan Siswa')" },
             { title: "📋 Absen Karyawan", desc: "Rekap kehadiran guru dan staf pegawai", permission: "Absen Karyawan", action: "alert('Membuka menu: Absen Karyawan')" }
         ];
+
+        // Memuat Data secara Real-Time dari Cloud Firestore saat halaman dibuka
+        async function loadCloudData() {
+            try {
+                // 1. Muat Pengumuman
+                const annDoc = await db.collection('settings').doc('announcement').get();
+                if (annDoc.exists) {
+                    const text = annDoc.data().text;
+                    document.getElementById('home-announcement-text').innerHTML = text.replace(/\n/g, '<br>');
+                    document.getElementById('announcementText').value = text;
+                } else {
+                    const defaultText = "Selamat datang di portal resmi Islamic School Al-Madinah. Pendaftaran peserta didik baru untuk tahun ajaran ini telah resmi dibuka. Silakan hubungi bagian administrasi untuk informasi lebih lanjut.";
+                    await db.collection('settings').doc('announcement').set({ text: defaultText });
+                    document.getElementById('home-announcement-text').innerHTML = defaultText.replace(/\n/g, '<br>');
+                    document.getElementById('announcementText').value = defaultText;
+                }
+
+                // 2. Muat Users
+                const usersSnap = await db.collection('users').get();
+                if (usersSnap.empty) {
+                    const defaultAdmin = {
+                        username: 'admin123',
+                        password: '123456789',
+                        nama: 'Admin Sekolah',
+                        jabatan: 'Administrator',
+                        hak_akses: ['Pengumuman Terbaru', 'Tambah User', 'Berita Terkini', 'Data Siswa', 'Data Guru', 'Absen Siswa', 'Penjemputan Siswa', 'Absen Karyawan']
+                    };
+                    const docRef = await db.collection('users').add(defaultAdmin);
+                    defaultAdmin.id = docRef.id;
+                    usersList = [defaultAdmin];
+                } else {
+                    usersList = [];
+                    usersSnap.forEach(doc => {
+                        let data = doc.data();
+                        data.id = doc.id;
+                        usersList.push(data);
+                    });
+                }
+
+                // 3. Muat Berita
+                const newsSnap = await db.collection('news').orderBy('createdAt', 'desc').get();
+                newsList = [];
+                newsSnap.forEach(doc => {
+                    let data = doc.data();
+                    data.id = doc.id;
+                    newsList.push(data);
+                });
+                renderNewsFeed();
+
+            } catch (err) {
+                console.error("Gagal menyinkronkan data Cloud Firestore:", err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadCloudData();
+        });
 
         // Jam, Tanggal Masehi, dan Kalender Hijriah Real-Time
         function updateDateTime() {
@@ -599,7 +662,7 @@
 
         setInterval(nextSlide, 3000);
 
-        // Fungsi Tombol Navigasi Antar Menu Tanpa Reload Halaman dengan Validasi Hak Akses
+        // Navigasi & Validasi Hak Akses
         function switchPage(pageId) {
             if (loggedInUser && loggedInUser.username !== 'admin123') {
                 if (pageId === 'pengumuman-menu' && (!loggedInUser.hak_akses || !loggedInUser.hak_akses.includes('Pengumuman Terbaru'))) {
@@ -629,34 +692,28 @@
             window.scrollTo(0, 0); 
         }
 
-        // Fungsi Memperbarui Pengumuman Terbaru di Beranda
-        function handleUpdateAnnouncement(event) {
+        // Simpan Pengumuman ke Cloud
+        async function handleUpdateAnnouncement(event) {
             event.preventDefault();
             const text = document.getElementById('announcementText').value.trim();
             if (text) {
+                await db.collection('settings').doc('announcement').set({ text: text });
                 document.getElementById('home-announcement-text').innerHTML = text.replace(/\n/g, '<br>');
-                alert('Pengumuman terbaru berhasil diperbarui dan ditayangkan di beranda!');
+                alert('Pengumuman terbaru berhasil diperbarui dan disimpan secara permanen di Cloud!');
                 switchPage('admin');
             }
         }
 
-        // Fungsi Menghasilkan Ucapan Berdasarkan Waktu & Nama User
         function getGreeting(userName) {
             const hour = new Date().getHours();
             let waktu = "Malam";
-            if (hour >= 4 && hour < 11) {
-                waktu = "Pagi";
-            } else if (hour >= 11 && hour < 15) {
-                waktu = "Siang";
-            } else if (hour >= 15 && hour < 18) {
-                waktu = "Sore";
-            } else {
-                waktu = "Malam";
-            }
+            if (hour >= 4 && hour < 11) waktu = "Pagi";
+            else if (hour >= 11 && hour < 15) waktu = "Siang";
+            else if (hour >= 15 && hour < 18) waktu = "Sore";
+            else waktu = "Malam";
             return `Selamat ${waktu}, ${userName}`;
         }
 
-        // Fungsi Validasi Login & Menampilkan Dashboard Sesuai Hak Akses
         function handleLogin(event) {
             event.preventDefault();
             const userInput = document.getElementById('username').value.trim();
@@ -682,7 +739,6 @@
             }
         }
 
-        // Fungsi Render Dashboard Admin secara Dinamis Berdasarkan Hak Akses
         function renderAdminDashboard() {
             const container = document.getElementById('admin-cards-grid');
             if (!container) return;
@@ -716,8 +772,7 @@
             container.innerHTML = html;
         }
 
-        // Fungsi Mengubah Username & Password Akun yang Sedang Login
-        function handleUpdateProfile(event) {
+        async function handleUpdateProfile(event) {
             event.preventDefault();
             const newU = document.getElementById('newUsername').value.trim();
             const newP = document.getElementById('newPassword').value.trim();
@@ -725,13 +780,19 @@
             if (newU && newP && loggedInUser) {
                 loggedInUser.username = newU;
                 loggedInUser.password = newP;
-                alert('Profil akun berhasil diperbarui!');
+                if (loggedInUser.id) {
+                    await db.collection('users').doc(loggedInUser.id).update({
+                        username: newU,
+                        password: newP
+                    });
+                }
+                alert('Profil akun berhasil diperbarui di Cloud!');
                 document.getElementById('profileForm').reset();
                 switchPage('admin');
             }
         }
 
-        // --- FITUR DOWNLOAD, UPLOAD, DAN TABEL USER ---
+        // --- MANAJEMEN USER & CLOUD STORAGE ---
         function downloadUserTemplate() {
             const csvContent = "username,password,nama_pengguna,jabatan,hak_akses\nguru01,rahasia123,Siti Aminah,Guru Kelas 1,Pengumuman Terbaru;Tambah User\nsiswa01,123456,Budi Santoso,Siswa,Absen Siswa\n";
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -749,11 +810,11 @@
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 const text = e.target.result;
                 
                 if (text.includes('PK') || text.includes('xl/')) {
-                    alert('Format file salah! Harap unggah file berformat CSV (hasil unduhan dari tombol Download Form).');
+                    alert('Format file salah! Harap unggah file berformat CSV.');
                     event.target.value = '';
                     return;
                 }
@@ -765,32 +826,37 @@
                     const line = lines[i].trim();
                     if (line) {
                         const cols = line.split(',');
+                        let newUser = {};
                         if (cols.length >= 5) {
                             let rawAccess = cols[4].trim().replace(/^"|"$/g, '');
                             let accessArray = rawAccess ? rawAccess.split(';') : [];
-                            usersList.push({
+                            newUser = {
                                 username: cols[0].trim(),
                                 password: cols[1].trim(),
                                 nama: cols[2].trim(),
                                 jabatan: cols[3].trim(),
                                 hak_akses: accessArray
-                            });
-                            countNew++;
+                            };
                         } else if (cols.length >= 4) {
-                            usersList.push({
+                            newUser = {
                                 username: cols[0].trim(),
                                 password: cols[1].trim(),
                                 nama: cols[2].trim(),
                                 jabatan: cols[3].trim(),
                                 hak_akses: []
-                            });
+                            };
+                        }
+                        if (newUser.username) {
+                            const docRef = await db.collection('users').add(newUser);
+                            newUser.id = docRef.id;
+                            usersList.push(newUser);
                             countNew++;
                         }
                     }
                 }
 
                 renderAllUsersTable();
-                alert(`Berhasil mengunggah dan menambahkan ${countNew} data pengguna baru!`);
+                alert(`Berhasil mengunggah dan menyimpan ${countNew} data pengguna baru ke Cloud!`);
                 event.target.value = ''; 
             };
             reader.readAsText(file);
@@ -828,7 +894,6 @@
             container.innerHTML = html;
         }
 
-        // Fungsi Membuka Form Pengaturan Hak Akses Berdasarkan User yang Dipilih
         function openEditAccess(index) {
             editingUserIndex = index;
             const user = usersList[index];
@@ -847,8 +912,7 @@
             window.scrollTo({ top: document.getElementById('edit-access-box').offsetTop - 50, behavior: 'smooth' });
         }
 
-        // Fungsi Menyimpan Perubahan Hak Akses
-        function saveUserAccess() {
+        async function saveUserAccess() {
             if (editingUserIndex === null) return;
 
             const checkboxes = document.querySelectorAll('input[name="editMenu"]:checked');
@@ -858,8 +922,12 @@
             });
 
             usersList[editingUserIndex].hak_akses = selectedMenus;
+            const u = usersList[editingUserIndex];
+            if (u.id) {
+                await db.collection('users').doc(u.id).update({ hak_akses: selectedMenus });
+            }
             renderAllUsersTable();
-            alert('Hak akses berhasil diperbarui!');
+            alert('Hak akses berhasil diperbarui di Cloud!');
             cancelEditAccess();
         }
 
@@ -868,16 +936,20 @@
             document.getElementById('edit-access-box').style.display = 'none';
         }
 
-        function deleteUser(index) {
+        async function deleteUser(index) {
             if (confirm('Apakah Anda yakin ingin menghapus user ini dari sistem?')) {
+                const u = usersList[index];
+                if (u.id) {
+                    await db.collection('users').doc(u.id).delete();
+                }
                 usersList.splice(index, 1);
                 renderAllUsersTable();
-                alert('User berhasil dihapus!');
+                alert('User berhasil dihapus dari Cloud!');
             }
         }
 
-        // Fungsi Berita
-        function handleAddNews(event) {
+        // --- MANAJEMEN BERITA & CLOUD STORAGE ---
+        async function handleAddNews(event) {
             event.preventDefault();
             const title = document.getElementById('newsTitle').value;
             const content = document.getElementById('newsContent').value;
@@ -901,23 +973,30 @@
 
             const currentDate = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 
-            newsList.unshift({
+            const newNewsItem = {
                 title: title,
                 content: content,
                 mediaUrl: mediaUrl,
                 mediaType: mediaType,
                 thumbnailHtml: thumbnailHtml,
-                date: currentDate
-            });
+                date: currentDate,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            const docRef = await db.collection('news').add(newNewsItem);
+            newNewsItem.id = docRef.id;
+            newsList.unshift(newNewsItem);
 
             renderNewsFeed();
-            alert(`Berita "${title}" berhasil diterbitkan!`);
+            alert(`Berita "${title}" berhasil diterbitkan dan disimpan ke Cloud secara permanen!`);
             document.getElementById('newsForm').reset();
             switchPage('home');
         }
 
         function renderNewsFeed() {
             const container = document.getElementById('dynamic-news-container');
+            if (!container) return;
+
             if (newsList.length === 0) {
                 container.innerHTML = '<p style="color: #666; font-style: italic; font-size: 0.9rem;">Belum ada berita yang diterbitkan.</p>';
                 return;
@@ -985,12 +1064,16 @@
             container.innerHTML = html;
         }
 
-        function deleteNews(index) {
+        async function deleteNews(index) {
             if (confirm('Apakah Anda yakin ingin menghapus berita ini dari website?')) {
+                const item = newsList[index];
+                if (item.id) {
+                    await db.collection('news').doc(item.id).delete();
+                }
                 newsList.splice(index, 1);
                 renderNewsFeed();
                 renderNewsManagement();
-                alert('Berita berhasil dihapus!');
+                alert('Berita berhasil dihapus dari Cloud!');
             }
         }
     </script>
